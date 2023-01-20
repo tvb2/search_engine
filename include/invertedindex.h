@@ -1,17 +1,19 @@
 #ifndef SEARCH_ENGINE_INVERTEDINDEX_H
 #define SEARCH_ENGINE_INVERTEDINDEX_H
 #include <vector>
+#include <iostream>
 #include <string>
 #include <map>
 #include <filesystem>
 #include "entry.h"
 
 class InvertedIndex{
-private:
+public:
 	std::vector<std::string> docs;
-	std::map<std::string, std::vector<Entry>> freq_dictionary;
+	std::map<std::string, std::vector<Entry>> index;
 	std::vector<std::string> extensions {".txt", ".doc"};
 	std::vector<std::filesystem::path> files;
+	
 public:
 		InvertedIndex();
 
@@ -19,12 +21,12 @@ public:
 	Обновить или заполнить базу документов, по которой будем совершать
 	поиск @param texts_input содержимое документов
 	*/
-	void UpdateDocumentBase(std::filesystem::path const &file);
+	void UpdateDocumentBase();
 
 	/**
 	 Perform database indexation
 	 */
-	void indexDB();
+	void indexDB(std::string const &doc, size_t const &fileNum);
 
 	/**
 	 Search dir for files to be indexed. File extensions are stored in extensions vector
@@ -39,6 +41,20 @@ public:
 	* @return возвращает подготовленный список с частотой слов
 	*/
 	std::vector<Entry> GetWordCount(const std::string& word);
+
+
+	/**
+	 Print index
+	*/
+	void printIndex(){
+		for (auto ind:index){
+		std::cout<<"word " << ind.first <<":\n";
+		for (auto vec:ind.second){
+			std::cout << "doc id: " <<vec.doc_id<< ", count: " << vec.count <<"\n";
+		}
+
+	}
+	}
 
 };
 
