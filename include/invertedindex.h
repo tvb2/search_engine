@@ -5,6 +5,7 @@
 #include <string>
 #include <map>
 #include <filesystem>
+#include <fstream>
 #include "entry.h"
 
 class InvertedIndex{
@@ -26,8 +27,8 @@ public:
 	/**
 	 Perform database indexation
 	 */
-	void indexDB(std::string const &doc, size_t const &fileNum);
-
+	//void indexDB(std::string const &doc, size_t fileNum);
+	void indexDB(size_t fileNum);
 	/**
 	 Search dir for files to be indexed. File extensions are stored in extensions vector
 	 */
@@ -52,7 +53,6 @@ public:
 		for (auto vec:ind.second){
 			std::cout << "doc id: " <<vec.doc_id<< ", count: " << vec.count <<"\n";
 		}
-
 	}
 	}
 

@@ -54,12 +54,14 @@ void InvertedIndex::UpdateDocumentBase(){
 /**
  Perform database indexation
  */
-void InvertedIndex::indexDB(std::string const &doc, size_t const &fileNum){
+boost::mutex indexAccess;
+//void InvertedIndex::indexDB(std::string const &doc, size_t fileNum){
+	void InvertedIndex::indexDB(size_t fileNum){
 	std::string buffer, word;
 	size_t i = 0;
-	while (i < doc.length()){
-		if (doc[i] != ' '){
-			buffer += doc[i];
+	while (i < docs[fileNum].length()){
+		if (docs[fileNum][i] != ' '){
+			buffer += docs[fileNum][i];
 		}
 		else{
 			if (buffer !=""){
@@ -68,19 +70,25 @@ void InvertedIndex::indexDB(std::string const &doc, size_t const &fileNum){
 				if (index.find(word) == index.end()){//no instance of word yet in the index
 					Entry e = {fileNum,1};
 					std::vector<Entry> temp{e};
+					indexAccess.lock();
 					index.emplace(word,temp);
+					indexAccess.unlock();
 				}
 				else{
 					for (size_t i = 0; i< index[word].size(); ++i){
 						if (index[word][i].doc_id == fileNum){
+							indexAccess.lock();
 							++index[word][i].count;
+							indexAccess.unlock();
 							done = true;
 							break;
 						}
 					}
 					if (!done){
 						Entry e = {fileNum,1};
+						indexAccess.lock();
 						index[word].emplace_back(e);
+						indexAccess.unlock();
 					}
 				}
 			}
