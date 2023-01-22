@@ -47,7 +47,7 @@ public:
 	* @param word слово, частоту вхождений которого необходимо определить
 	* @return возвращает подготовленный список с частотой слов
 	*/
-	std::vector<Entry> GetWordCount(const std::string& word);
+	std::vector<Entry> getWordCount(const std::string& word);
 
 
 	/**

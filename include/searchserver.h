@@ -15,6 +15,11 @@ public:
 	*/
 	SearchServer(InvertedIndex& idx);
 
+	 /**
+	 Calculate Absolute index for a given request
+	 */
+	void absRelevant(const std::vector<std::string>& queries_input, std::map<size_t,int> &absRelev);
+
 	/**
 	* Метод обработки поисковых запросов
 	* @param queries_input поисковые запросы взятые из файла

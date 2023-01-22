@@ -152,7 +152,7 @@ InvertedIndex::InvertedIndex () {
 * @param word слово, частоту вхождений которого необходимо определить
 * @return возвращает подготовленный список с частотой слов
 */
-std::vector<Entry> InvertedIndex::GetWordCount(const std::string& word){
+std::vector<Entry> InvertedIndex::getWordCount(const std::string& word){
 	//std::vector<Entry> result;
 	return this->index[word];
 }

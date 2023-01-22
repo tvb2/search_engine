@@ -42,8 +42,8 @@ int main () {
 			 request.emplace_back(word);
 		 }
 		 std::vector<RelativeIndex> relInd;
-		 std::vector<Entry> e;
-		 e = index.GetWordCount("and");
+//		 std::vector<Entry> e;
+//		 e = index.getWordCount("and");
 
 		 command = "exit";
 		 relInd = server.search(request);
