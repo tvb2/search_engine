@@ -9,12 +9,12 @@
 #include "entry.h"
 
 class InvertedIndex{
-public:
+private:
 	std::vector<std::string> docs;
 	std::map<std::string, std::vector<Entry>> index;
 	std::vector<std::string> extensions {".txt", ".doc"};
-	std::vector<std::filesystem::path> files;
-	
+	std::map<std::filesystem::path,int> files;
+
 public:
 		InvertedIndex();
 
@@ -25,10 +25,16 @@ public:
 	void UpdateDocumentBase();
 
 	/**
-	 Perform database indexation
+	 Perform one file indexation
 	 */
 	//void indexDB(std::string const &doc, size_t fileNum);
-	void indexDB(size_t fileNum);
+	void indexFile(size_t fileNum);
+
+	/**
+	 Perform database indexation
+	 * */
+	 void indexDB();
+
 	/**
 	 Search dir for files to be indexed. File extensions are stored in extensions vector
 	 */

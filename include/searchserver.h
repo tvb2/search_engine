@@ -22,7 +22,7 @@ public:
 	* @return возвращает отсортированный список релевантных ответов для
 	заданных запросов
 	*/
-	std::vector<std::vector<RelativeIndex>> search(const
+	std::vector<RelativeIndex> search(const
 	                                               std::vector<std::string>& queries_input);
 private:
 	InvertedIndex _index;

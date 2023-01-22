@@ -1,55 +1,59 @@
 #include <iostream>
 #include <converterjson.h>
 #include "invertedindex.h"
+#include "searchserver.h"
+#include <string>
 
 #include <filesystem>
 #include <fstream>
 #include <vector>
-#include <string>
 #include <map>
-
 #include <thread>
-#include <boost/thread.hpp>
-
+#include "sstream"
 
 int main () {
-	std::cout<<"Program started..\n";
-	
+	std::cout<<"Program LeoT  started..\n";
+
+	std::cout << "creating index... please wait...\n";
 	InvertedIndex index;
+	SearchServer server(index);
+	std::cout << "index created.\n";
 
+	std::string command = "search";
 
-auto start = std::chrono::high_resolution_clock::now();
+ while (true) {
+	 std::cout<<"'index', 'search', 'exit' to exit the program\n";
+//	 std::cin >> command;
+	 if (command == "index") {
+		 std::cout<<"started indexing the files\n";
+		 index.indexDB();
+		 std::cout << "Task complete..\n";
+	 }
+	 else if (command == "search"){
+		 std::cout<<"enter line to search: \n";
+//		 std::getline (std::cin, searchRequest);
 
-//for (size_t i = 0; i < index.files.size(); ++i )
+		 std::string searchRequest = "   war        and peace";
+		 std::string word;
+		 std::stringstream stream(searchRequest);
+		 std::vector<std::string> request;
+		 while (!stream.eof()) {
+			 stream >> word;
+			 request.emplace_back(word);
+		 }
+		 std::vector<RelativeIndex> relInd;
+		 std::vector<Entry> e;
+		 e = index.GetWordCount("and");
 
-size_t i = 0;
-std::vector<std::thread> th(boost::thread::hardware_concurrency());
+		 command = "exit";
+		 relInd = server.search(request);
 
-//for (; i < index.files.size()-th.size()+1; i += th.size() ){
-for (; i < 100; i += th.size() ){
-	//index.indexDB(index.docs[i],i);
-	size_t ind = i;
-	for (size_t t = 0; t < th.size(); ++t){
-		size_t ind = i+t;
-		th[t] = std::thread{&InvertedIndex::indexDB, &index, std::ref(ind)};
-		boost::this_thread::sleep_for(boost::chrono::milliseconds(50));
-	}
-	for (size_t t = 0; t < th.size(); ++t){
-		th[t].join();
-	}
-
-}
- 
-
-
-auto stop = std::chrono::high_resolution_clock::now();
-
- std::chrono::duration<float> duration =  stop - start;
-
-	index.printIndex();
-
-std::cout<<"duration: " << duration.count() <<"\n";
-
-	std::cout<<"Program complete..\n";
+	 }
+	 else if (command == "exit")
+		 break;
+	 else
+		 std::cout<<"Wrong command!\n";
+ }
+	std::cout << "Program complete..\n";
 
 }
