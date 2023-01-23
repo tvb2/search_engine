@@ -31,23 +31,21 @@ int main () {
 	 }
 	 else if (command == "search"){
 		 std::cout<<"enter line to search: \n";
-//		 std::getline (std::cin, searchRequest);
+		 std::string searchRequest;
+		 std::getline (std::cin, searchRequest);
 
-		 std::string searchRequest = "   war        and peace";
 		 std::string word;
 		 std::stringstream stream(searchRequest);
 		 std::vector<std::string> request;
 		 while (!stream.eof()) {
 			 stream >> word;
-			 request.emplace_back(word);
+			 if (word != "")
+			    request.emplace_back(word);
+			 word = "";
 		 }
 		 std::vector<RelativeIndex> relInd;
-//		 std::vector<Entry> e;
-//		 e = index.getWordCount("and");
-
-		 command = "exit";
 		 relInd = server.search(request);
-
+		 server.printResult();
 	 }
 	 else if (command == "exit")
 		 break;

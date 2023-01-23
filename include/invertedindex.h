@@ -49,10 +49,12 @@ public:
 	*/
 	std::vector<Entry> getWordCount(const std::string& word);
 
+	const std::filesystem::path& getFilePath(size_t const &doc_id);
 
-	/**
-	 Print index
-	*/
+
+		/**
+		 Print index
+		*/
 	void printIndex(){
 		for (auto ind:index){
 		std::cout<<"word " << ind.first <<":\n";

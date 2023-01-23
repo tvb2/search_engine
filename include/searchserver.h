@@ -29,8 +29,12 @@ public:
 	*/
 	std::vector<RelativeIndex> search(const
 	                                               std::vector<std::string>& queries_input);
+
+	void printResult();
+
 private:
 	InvertedIndex _index;
+	std::vector<RelativeIndex> result;
 };
 
 

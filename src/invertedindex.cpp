@@ -9,7 +9,7 @@
 #include <thread>
 
 // #define DEBUG_CONSTRUCTOR
-#define DEBUG_DBINDEX
+//#define DEBUG_DBINDEX
 
 InvertedIndex::InvertedIndex () {
 	indexDB();
@@ -144,6 +144,14 @@ InvertedIndex::InvertedIndex () {
 				}
 			}
 		}
+	}
+
+	const std::filesystem::path& InvertedIndex::getFilePath(size_t const &doc_id){
+		auto it = this->files.begin();
+		for (size_t i = 0; i < doc_id; ++i){
+			++it;
+		}
+		return it->first;
 	}
 
 /**

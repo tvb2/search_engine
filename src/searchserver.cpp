@@ -31,6 +31,7 @@ SearchServer::SearchServer(InvertedIndex& idx) : _index(idx){
 	заданных запросов
 	*/
 	std::vector<RelativeIndex> SearchServer::search(const std::vector<std::string>& queries_input){
+		result.clear();
 		std::map<size_t, int> relIndex;
 		absRelevant(queries_input, relIndex);
 		int maxInd = 0;
@@ -38,12 +39,22 @@ SearchServer::SearchServer(InvertedIndex& idx) : _index(idx){
 			if (it.second > maxInd)
 				maxInd = it.second;
 		}
-		std::vector<RelativeIndex> result;
-		float rank = 0;
+		std::map<int, size_t> sortedIndex;
 		for (auto it:relIndex){
-			rank = (float)it.second/(float)maxInd;
-			RelativeIndex ri{it.first, rank};
+			sortedIndex[it.second] = it.first;
+		}
+		float rank = 0;
+		for (auto it:sortedIndex){
+			rank = (float)it.first/(float)maxInd;
+			RelativeIndex ri{it.second, rank};
 			result.emplace_back(ri);
 		}
 		return result;
+	}
+
+	void SearchServer::printResult(){
+		for (std::vector<RelativeIndex>::const_reverse_iterator it = result.crbegin(); it != result.crend(); ++it){
+			std::cout << "doc: " <<it->doc_id << ", filename: " << _index.getFilePath(it->doc_id).filename() << ", rank: " << it->rank <<"\n";
+		}
+
 	}
