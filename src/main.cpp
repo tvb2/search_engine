@@ -19,6 +19,8 @@ int main () {
 	SearchServer server(index);
 	std::cout << "index created.\n";
 
+	ConverterJSON js(index);
+
 	std::string command = "search";
 
  while (true) {

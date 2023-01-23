@@ -9,27 +9,30 @@
 #include <thread>
 
 // #define DEBUG_CONSTRUCTOR
-//#define DEBUG_DBINDEX
+#define DEBUG_DBINDEX
+	/**
+	 * Constructor
+	 * */
+	InvertedIndex::InvertedIndex () {
+		indexDB();
 
-InvertedIndex::InvertedIndex () {
-	indexDB();
-
-#ifdef DEBUG_CONSTRUCTOR
-	for (auto it:files){
-		//std::cout<<it<<"\n";
-	}
-	std::cout<<docs.size() << " docs records in the index \n";
-	for (auto i = 0; i<docs.size(); ++i){
-		std::cout<<"docs["<<i<<"]: ";
-		for (size_t j = 0; j<10; ++j){
-			if (j<docs[i].length())
-				std::cout<<docs[i][j];
+	#ifdef DEBUG_CONSTRUCTOR
+		for (auto it:files){
+			//std::cout<<it<<"\n";
 		}
-		std::cout<<"\n";
-	}
-#endif
+		std::cout<<docs.size() << " docs records in the index \n";
+		for (auto i = 0; i<docs.size(); ++i){
+			std::cout<<"docs["<<i<<"]: ";
+			for (size_t j = 0; j<10; ++j){
+				if (j<docs[i].length())
+					std::cout<<docs[i][j];
+			}
+			std::cout<<"\n";
+		}
+	#endif
 
-}
+	}
+
 	/**
 	* Обновить или заполнить базу документов, по которой будем совершать
 	поиск
@@ -96,7 +99,7 @@ InvertedIndex::InvertedIndex () {
 	 * */
 	 void InvertedIndex::indexDB() {
 		auto start = std::chrono::high_resolution_clock::now();
-		this->getFilesToIndex();
+		this->setFilesToIndex();
 		this->UpdateDocumentBase();
 		size_t i = 0;
 		std::vector<std::thread> th(std::thread::hardware_concurrency());
@@ -117,17 +120,18 @@ InvertedIndex::InvertedIndex () {
 			}
 		}
 		auto stop = std::chrono::high_resolution_clock::now();
-#ifdef DEBUG_DBINDEX
 		std::chrono::duration<float> duration = stop - start;
+		std::cout << "indexing duration: " << duration.count() << " seconds \n";
+		std::cout << "Total: " << this->index.size() << " unique words indexed \n";
+#ifdef DEBUG_DBINDEX
 //		this->printIndex();
-		std::cout << "duration: " << duration.count() << "\n";
 #endif
 }
 
 	/**
 	 Search dir for files to be indexed. File extensions are stored in extensions vector
 	 */
-	void InvertedIndex::getFilesToIndex() {
+	void InvertedIndex::setFilesToIndex() {
 
 		std::filesystem::path path = std::filesystem::current_path();
 		path /= "database";
@@ -146,6 +150,11 @@ InvertedIndex::InvertedIndex () {
 		}
 	}
 
+	/**
+	* return filesystem::path to the file by its id
+	* @param doc_id
+	* @return std::filesystem::path&
+	*/
 	const std::filesystem::path& InvertedIndex::getFilePath(size_t const &doc_id){
 		auto it = this->files.begin();
 		for (size_t i = 0; i < doc_id; ++i){

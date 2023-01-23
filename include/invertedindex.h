@@ -36,10 +36,17 @@ public:
 	 void indexDB();
 
 	/**
-	 Search dir for files to be indexed. File extensions are stored in extensions vector
+	 * 	 Search dir for files to be indexed. File extensions are stored in extensions vector
 	 */
-	void getFilesToIndex();
+	void setFilesToIndex();
 
+	/**
+	*
+	* @return map of std::filesystem::path with the files used in index
+	*/
+	const std::map<std::filesystem::path,int>& getFilesFromIndex() const {
+		return files;
+	}
 
 	/**
 	* Метод определяет количество вхождений слова word в загруженной базе
@@ -49,12 +56,16 @@ public:
 	*/
 	std::vector<Entry> getWordCount(const std::string& word);
 
+	/**
+	 * return filesystem::path to the file by its id
+	 * @param doc_id
+	 * @return std::filesystem::path
+	 */
 	const std::filesystem::path& getFilePath(size_t const &doc_id);
 
-
-		/**
-		 Print index
-		*/
+	/**
+	 Print index
+	*/
 	void printIndex(){
 		for (auto ind:index){
 		std::cout<<"word " << ind.first <<":\n";
