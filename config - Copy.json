@@ -1,12 +1,10 @@
 {
-  "config":
-  {
+  "config": {
     "name": "WaP LT",
     "version": "0.1",
     "max_responses": 5
   },
-  "files":
-  [
+  "files": [
     "./database/file001.txt",
     "./database/file002.txt",
     "./database/file003.txt",

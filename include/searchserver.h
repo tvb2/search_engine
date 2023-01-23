@@ -32,6 +32,11 @@ public:
 
 	void printResult();
 
+
+	const std::vector<RelativeIndex>& getSearchResult(){
+		return this->result;
+	};
+
 private:
 	InvertedIndex _index;
 	std::vector<RelativeIndex> result;

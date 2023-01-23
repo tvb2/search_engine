@@ -20,6 +20,10 @@ int main () {
 	std::cout << "index created.\n";
 
 	ConverterJSON js(index);
+	std::vector<std::string> docs;
+	docs = js.getTextDocuments();
+	std::vector<std::string> vec;
+	vec = js.getRequests();
 
 	std::string command = "search";
 
