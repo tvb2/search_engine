@@ -105,6 +105,31 @@
 	/**
 	* Положить в файл answers.json результаты поисковых запросов
 	*/
-	void ConverterJSON::putAnswers(std::vector<std::vector<std::pair<int, float>>>answers){
-
+	void ConverterJSON::putAnswers(std::vector<std::vector<RelativeIndex>>answers){
+		std::ofstream answersFile("answers.json");
+		nlohmann::json ans, req;
+		std::string reqName = "request";
+		for (size_t i = 0; i < answers.size(); ++i){
+			reqName = "request";
+			if (i < 10)
+				reqName += "00" + std::to_string(i+1);
+			else if (i >= 10 && i < 100)
+				reqName += "0" + std::to_string(i+1);
+			else
+				reqName += std::to_string(i+1);
+			if (answers[i][0].rank != -1) {
+				req[reqName]["result"] = "true";
+				nlohmann::json res;
+				for (auto item:answers[i]){
+					res["doc_id"] = item.doc_id;
+					res["rank"] = item.rank;
+					req[reqName]["relevance"] += res;
+				}
+			}
+			else
+				req[reqName]["result"] = "false";
+		}
+		ans["answers"] = req;
+		answersFile << std::setw(4) << ans;
+		answersFile.close();
 	}

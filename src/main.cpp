@@ -26,7 +26,9 @@ int main () {
 	docs = js.getTextDocuments();
 	std::vector<std::string> requests;
 	requests = js.getRequests();
-
+	std::vector<std::vector<RelativeIndex>> relInd;
+	relInd = server.search(requests);
+	js.putAnswers(relInd);
 
 	std::string command = "search";
 
@@ -48,8 +50,8 @@ int main () {
 			 {"nuclear powerstation"},
 			 {"random abracadabra"},
 			 {"villages of russian people"}};
-		 std::vector<std::vector<RelativeIndex>> relInd;
-		 relInd = server.search(request);
+//		 std::vector<std::vector<RelativeIndex>> relInd;
+//		 relInd = server.search(request);
 	 }
 	 else if (command == "exit")
 		 break;
