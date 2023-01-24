@@ -2,6 +2,7 @@
 #include <converterjson.h>
 #include "invertedindex.h"
 #include "searchserver.h"
+#include "userinterface.h"
 #include <string>
 
 #include <filesystem>
@@ -12,18 +13,20 @@
 #include "sstream"
 
 int main () {
-	std::cout<<"Program LeoT  started..\n";
+	UserInterface ui;
 
+	std::cout<<"Program LeoT  started..\n";
 	std::cout << "creating index... please wait...\n";
 	InvertedIndex index;
 	SearchServer server(index);
 	std::cout << "index created.\n";
-
 	ConverterJSON js(index);
+
 	std::vector<std::string> docs;
 	docs = js.getTextDocuments();
-	std::vector<std::string> vec;
-	vec = js.getRequests();
+	std::vector<std::string> requests;
+	requests = js.getRequests();
+
 
 	std::string command = "search";
 
@@ -38,20 +41,15 @@ int main () {
 	 else if (command == "search"){
 		 std::cout<<"enter line to search: \n";
 		 std::string searchRequest;
-		 std::getline (std::cin, searchRequest);
+//		 std::getline (std::cin, searchRequest);
 
-		 std::string word;
-		 std::stringstream stream(searchRequest);
-		 std::vector<std::string> request;
-		 while (!stream.eof()) {
-			 stream >> word;
-			 if (word != "")
-			    request.emplace_back(word);
-			 word = "";
-		 }
-		 std::vector<RelativeIndex> relInd;
+		 std::vector<std::string> request{
+			 {"war and piece"},
+			 {"nuclear powerstation"},
+			 {"random abracadabra"},
+			 {"villages of russian people"}};
+		 std::vector<std::vector<RelativeIndex>> relInd;
 		 relInd = server.search(request);
-		 server.printResult();
 	 }
 	 else if (command == "exit")
 		 break;

@@ -22,7 +22,7 @@ public:
 	Обновить или заполнить базу документов, по которой будем совершать
 	поиск @param texts_input содержимое документов
 	*/
-	void UpdateDocumentBase();
+	void updateDocumentBase();
 
 	/**
 	 Perform one file indexation

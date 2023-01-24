@@ -10,17 +10,35 @@ SearchServer::SearchServer(InvertedIndex& idx) : _index(idx){
 }
 
 	/**
-	 Calculate Absolute Relevant index for a given request
+	 *
+	 * @param queries_input vector of strings
+	 * @param absIndex map<size_t, int> - doc_id, number of occurrence
 	 */
-	void SearchServer::absRelevant(const std::vector<std::string>& queries_input,std::map<size_t,int>& relIndex){
-		for (auto word:queries_input){
+	void SearchServer::absRelevant(const std::string &queries_input,std::map<size_t,int>& absIndex){
+		std::string word;
+		std::stringstream stream(queries_input);
+		while (!stream.eof()) {
+			stream >> word;
 			if (_index.getWordCount(word).size() != 0){
 				std::vector<Entry> e = _index.getWordCount(word);
 				for (auto ar:e){
-					relIndex[ar.doc_id] += ar.count;
+					absIndex[ar.doc_id] += ar.count;
 				}
 			}
 		}
+	}
+
+	/**
+ * create map with key as count number and value as doc_id
+ * @param relIndex
+ * @return map sorted from least to most count number
+ */
+	std::multimap<int, size_t> SearchServer::sortedByCount(std::map<size_t, int> const &relIndex){
+		std::multimap<int, size_t> sortedIndex;
+		for (auto it: relIndex) {
+			sortedIndex.emplace(it.second,it.first);
+		}
+		return sortedIndex;
 	}
 
 	/**
@@ -30,31 +48,45 @@ SearchServer::SearchServer(InvertedIndex& idx) : _index(idx){
 	* @return возвращает отсортированный список релевантных ответов для
 	заданных запросов
 	*/
-	std::vector<RelativeIndex> SearchServer::search(const std::vector<std::string>& queries_input){
+	std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<std::string>& queries_input){
 		result.clear();
-		std::map<size_t, int> relIndex;
-		absRelevant(queries_input, relIndex);
-		int maxInd = 0;
-		for (auto it:relIndex){
-			if (it.second > maxInd)
-				maxInd = it.second;
-		}
-		std::map<int, size_t> sortedIndex;
-		for (auto it:relIndex){
-			sortedIndex[it.second] = it.first;
-		}
-		float rank = 0;
-		for (auto it:sortedIndex){
-			rank = (float)it.first/(float)maxInd;
-			RelativeIndex ri{it.second, rank};
-			result.emplace_back(ri);
+		std::vector<RelativeIndex> temp;
+		std::map<size_t, int> absIndex;
+
+		//search one string from queries_input vector
+		for (auto item:queries_input) {
+			absIndex.clear();
+			absRelevant(item, absIndex);
+			//search resulted in zero occurrences
+			if (absIndex.empty()) {
+				RelativeIndex empty{0, -1};
+				temp.emplace_back(empty);
+				result.emplace_back(temp);
+				temp.clear();
+				continue;
+			}
+
+			//convert search result to a sorted map
+			std::multimap<int, size_t> sortedIndex = sortedByCount(absIndex);
+			float rank = 0;
+			auto maxInd = sortedIndex.end();
+			--maxInd;
+
+			//create vector of Rel Index values for this search string
+			for (auto it: sortedIndex) {
+				rank = (float) it.first / (float) maxInd->first;
+				RelativeIndex ri{it.second, rank};
+				temp.emplace_back(ri);
+			}
+			result.emplace_back(temp);
+			temp.clear();
 		}
 		return result;
 	}
 
-	void SearchServer::printResult(){
-		for (std::vector<RelativeIndex>::const_reverse_iterator it = result.crbegin(); it != result.crend(); ++it){
-			std::cout << "doc: " <<it->doc_id << ", filename: " << _index.getFilePath(it->doc_id).filename() << ", rank: " << it->rank <<"\n";
-		}
-
-	}
+//	void SearchServer::printResult(){
+//		for (std::vector<RelativeIndex>::const_reverse_iterator it = result.crbegin(); it != result.crend(); ++it){
+//			std::cout << "doc: " <<it->doc_id << ", filename: " << _index.getFilePath(it->doc_id).filename() << ", rank: " << it->rank <<"\n";
+//		}
+//
+//	}

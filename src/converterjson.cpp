@@ -83,6 +83,7 @@
 				if (it.key() == "max_responses")
 					return it.value();
 			}
+		return 5;
 	}
 
 	/**

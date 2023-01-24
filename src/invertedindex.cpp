@@ -38,7 +38,7 @@
 	поиск
 	* @param texts_input содержимое документов
 	*/
-	void InvertedIndex::UpdateDocumentBase(){
+	void InvertedIndex::updateDocumentBase(){
 	//clear database before indexation
 	docs.clear();
 	docs.resize(files.size());
@@ -100,7 +100,7 @@
 	 void InvertedIndex::indexDB() {
 		auto start = std::chrono::high_resolution_clock::now();
 		this->setFilesToIndex();
-		this->UpdateDocumentBase();
+		this->updateDocumentBase();
 		size_t i = 0;
 		std::vector<std::thread> th(std::thread::hardware_concurrency());
 #ifndef DEBUG_DBINDEX

@@ -1,6 +1,7 @@
 #ifndef SEARCH_ENGINE_CONVERTERJSON_H
 #define SEARCH_ENGINE_CONVERTERJSON_H
 #include "invertedindex.h"
+#include "searchserver.h"
 #include <vector>
 #include <string>
 
@@ -36,8 +37,7 @@ public:
 	/**
 	* Положить в файл answers.json результаты поисковых запросов
 	*/
-	void putAnswers(std::vector<std::vector<std::pair<int, float>>>
-	answers);
+	void putAnswers(std::vector<std::vector<std::pair<int, float>>>answers);
 };
 
 #endif //SEARCH_ENGINE_CONVERTERJSON_H
