@@ -2,12 +2,19 @@
 #define SEARCH_ENGINE_CONVERTERJSON_H
 #include "invertedindex.h"
 #include "searchserver.h"
+#include "nlohmann/json.hpp"
 #include <vector>
 #include <string>
 
 class ConverterJSON{
+private:
+	std::string version = "0.1";
 public:
 	ConverterJSON(InvertedIndex const &ind);
+
+	nlohmann::json getConfigData();
+
+	std::string getTimeStamp();
 
 	/**
 	* Метод получения содержимого файлов
@@ -17,15 +24,24 @@ public:
 	std::vector<std::string> getTextDocuments();
 
 	/**
-	 initialize list of files for search server. Performed at server startup and when requested by user
-	 * */
-	void initializeFilesList();
+	 * look at time stamp when indexing was performed last time and advise if re-indexing is needed
+	 * @return
+	 */
+	void indexingRequired(bool &needUpdate);
 
 	/**
-	* Метод считывает поле max_responses для определения предельного
-	* количества ответов на один запрос
-	* @return
-	*/
+	 initialize list of files for search server. Performed at server startup and when requested by user
+	 * */
+	nlohmann::json getFileList(InvertedIndex const &ind);
+
+	void updateFileList();
+
+
+		/**
+		* Метод считывает поле max_responses для определения предельного
+		* количества ответов на один запрос
+		* @return
+		*/
 	int getResponsesLimit();
 
 	/**

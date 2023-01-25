@@ -28,11 +28,17 @@ int main () {
 	relInd = server.search(requests);
 	json.putAnswers(relInd);
 
-	std::string command = "search";
+	std::string command = "exit";
+
+//	json.getFileList();
+
+	bool needUpdate = false;
+	std::thread monitor(&ConverterJSON::indexingRequired, json, std::ref(needUpdate));
+	monitor.detach();
 
  while (true) {
 	 std::cout<<"'index', 'search', 'exit' to exit the program\n";
-//	 std::cin >> command;
+	 std::cin >> command;
 	 if (command == "index") {
 		 std::cout<<"started indexing the files\n";
 		 index.indexDB();
@@ -55,6 +61,8 @@ int main () {
 		 break;
 	 else
 		 std::cout<<"Wrong command!\n";
+    if (needUpdate)
+		index.indexDB();
  }
 	std::cout << "Program complete..\n";
 
