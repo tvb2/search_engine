@@ -2,7 +2,6 @@
 #include <converterjson.h>
 #include "invertedindex.h"
 #include "searchserver.h"
-#include "userinterface.h"
 #include <string>
 
 #include <filesystem>
@@ -13,22 +12,21 @@
 #include "sstream"
 
 int main () {
-	UserInterface ui;
 
 	std::cout<<"Program LeoT  started..\n";
 	std::cout << "creating index... please wait...\n";
 	InvertedIndex index;
 	SearchServer server(index);
 	std::cout << "index created.\n";
-	ConverterJSON js(index);
+	ConverterJSON json(index);
 
 	std::vector<std::string> docs;
-	docs = js.getTextDocuments();
+	docs = json.getTextDocuments();
 	std::vector<std::string> requests;
-	requests = js.getRequests();
+	requests = json.getRequests();
 	std::vector<std::vector<RelativeIndex>> relInd;
 	relInd = server.search(requests);
-	js.putAnswers(relInd);
+	json.putAnswers(relInd);
 
 	std::string command = "search";
 

@@ -7,6 +7,8 @@
 #include <map>
 #include <fstream>
 
+//#define DEBUG_GETEXTDOCUMENTS
+
 	ConverterJSON::ConverterJSON (InvertedIndex const &ind) {
 		std::map<std::filesystem::path,int> files;
 		files = ind.getFilesFromIndex();
@@ -14,10 +16,6 @@
 		for (auto item:files) {
 			f.emplace_back(item.first);
 		}
-/*
- *to do: convert path to relative
- * std::filesystem::relative, std::filesystem::proximate
- * */
 		nlohmann::json found;
 		std::ifstream input ("config.json");
 		input >> found;
@@ -26,6 +24,7 @@
 		std::ofstream output ("config.json");
 		output << std::setw(4) << found << "\n";
 		output.close();
+		std::cout<<"JSON module initialized\n";
 	}
 
 	/**
@@ -43,22 +42,23 @@
 		std::ifstream doc;
 		std::string buffer, text;
 		for (auto item:files){
-	//		std::cout<<"item: " << item <<"\n";
 			doc.open(item);
 			while (!doc.eof()) {
 				std::getline(doc,buffer);
 				text += buffer + " ";
 	//			buffer = "";
 			}
-			result.emplace_back(buffer);
+				result.emplace_back(buffer);
 			doc.close();
 		}
-	//	for (auto i:result){
-	//		for (size_t j = 0; j<10; ++j){
-	//			std::cout<<i[j];
-	//		}
-	//		std::cout<<"\n";
-	//	}
+#ifdef DEBUG_GETEXTDOCUMENTS
+		for (auto i:result){
+			for (size_t j = 0; j<10; ++j){
+				std::cout<<i[j];
+			}
+			std::cout<<"\n";
+		}
+#endif
 		return result;
 	}
 
@@ -102,34 +102,42 @@
 		return result;
 	}
 
+	std::string ConverterJSON::createName(size_t const i) {
+		std::string reqName = "request";
+		if (i < 10)
+			reqName += "00" + std::to_string(i+1);
+		else if (i >= 10 && i < 100)
+			reqName += "0" + std::to_string(i+1);
+		else
+			reqName += std::to_string(i+1);
+		return reqName;
+	}
+
 	/**
 	* Положить в файл answers.json результаты поисковых запросов
 	*/
 	void ConverterJSON::putAnswers(std::vector<std::vector<RelativeIndex>>answers){
 		std::ofstream answersFile("answers.json");
 		nlohmann::json ans, req;
-		std::string reqName = "request";
+		std::string reqName;
 		for (size_t i = 0; i < answers.size(); ++i){
-			reqName = "request";
-			if (i < 10)
-				reqName += "00" + std::to_string(i+1);
-			else if (i >= 10 && i < 100)
-				reqName += "0" + std::to_string(i+1);
-			else
-				reqName += std::to_string(i+1);
+			reqName = createName(i);
 			if (answers[i][0].rank != -1) {
 				req[reqName]["result"] = "true";
 				nlohmann::json res;
-				for (auto item:answers[i]){
-					res["doc_id"] = item.doc_id;
-					res["rank"] = item.rank;
+				auto it = answers[i].rbegin();
+				int count{0}, maxRes{getResponsesLimit()};
+				while (it != answers[i].rend() && count < maxRes){
+					res["doc_id"] = it->doc_id;
+					res["rank"] = it->rank;
 					req[reqName]["relevance"] += res;
+					++count; ++it;
 				}
 			}
 			else
 				req[reqName]["result"] = "false";
 		}
 		ans["answers"] = req;
-		answersFile << std::setw(4) << ans;
+		answersFile << std::setw(4) << std::fixed << std::setprecision(4) << ans;
 		answersFile.close();
 	}

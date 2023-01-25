@@ -1,5 +1,6 @@
 #include "searchserver.h"
 #include <map>
+#include <cmath>
 
 #define DEBUG_CONSTRUCTOR
 
@@ -30,12 +31,12 @@ SearchServer::SearchServer(InvertedIndex& idx) : _index(idx){
 
 	/**
  * create map with key as count number and value as doc_id
- * @param relIndex
+ * @param absIndex
  * @return map sorted from least to most count number
  */
-	std::multimap<int, size_t> SearchServer::sortedByCount(std::map<size_t, int> const &relIndex){
+	std::multimap<int, size_t> SearchServer::sortByCount(std::map<size_t, int> const &absIndex){
 		std::multimap<int, size_t> sortedIndex;
-		for (auto it: relIndex) {
+		for (auto it: absIndex) {
 			sortedIndex.emplace(it.second,it.first);
 		}
 		return sortedIndex;
@@ -67,7 +68,7 @@ SearchServer::SearchServer(InvertedIndex& idx) : _index(idx){
 			}
 
 			//convert search result to a sorted map
-			std::multimap<int, size_t> sortedIndex = sortedByCount(absIndex);
+			std::multimap<int, size_t> sortedIndex = sortByCount(absIndex);
 			float rank = 0;
 			auto maxInd = sortedIndex.end();
 			--maxInd;
@@ -81,6 +82,7 @@ SearchServer::SearchServer(InvertedIndex& idx) : _index(idx){
 			result.emplace_back(temp);
 			temp.clear();
 		}
+//
 		return result;
 	}
 

@@ -22,10 +22,10 @@ public:
 
 	/**
 	 * create map with key as count number and value as doc_id
-	 * @param relIndex
+	 * @param absIndex
 	 * @return map sorted from least to most count number
 	 */
-	std::multimap<int, size_t> sortedByCount(std::map<size_t, int> const &relIndex);
+	std::multimap<int, size_t> sortByCount(std::map<size_t, int> const &absIndex);
 
 	/**
 	* Метод обработки поисковых запросов

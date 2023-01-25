@@ -34,6 +34,8 @@ public:
 	*/
 	std::vector<std::string> getRequests();
 
+	std::string createName(size_t const i);
+
 	/**
 	* Положить в файл answers.json результаты поисковых запросов
 	*/
