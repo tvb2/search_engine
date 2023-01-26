@@ -3,7 +3,6 @@
 #include "invertedindex.h"
 #include "searchserver.h"
 #include <string>
-
 #include <vector>
 #include <thread>
 
