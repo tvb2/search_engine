@@ -25,43 +25,58 @@ public:
 	}
 };
 
-	ConverterJSON::ConverterJSON (InvertedIndex const &ind) {
+	ConverterJSON::ConverterJSON (InvertedIndex const &ind) : _index(ind) {
 		//get data from config.json
-		nlohmann::json found = this->getConfigData();
+		nlohmann::json config = this->getConfigData();
 
-		//check programm version and throw error if it doesn't match the latests version
+		//check programm version and throw error if it doesn't match the latest version
+		this->checkVersion(config);
+
+		//get list of files from InvertedIndex class and update config.json "files"
+		this->updateFileList();
+		std::cout<<"JSON module initialized\n";
+	}
+
+	/**
+	 * read data from config.json
+	 * @return contents of config.json of json datatype
+	 */
+	nlohmann::json ConverterJSON::getConfigData(){
+			nlohmann::json found;
+			std::ifstream input;
+
+			//throw error if config.json file is missing
+			try {
+				input.open("config.json");
+				if (!input.is_open())
+					throw ConfigMissingException();
+			}
+			catch(ConfigMissingException &x) {
+				std::cerr << x.what();
+			}
+			input >> found;
+			input.close();
+			return found;
+		}
+
+	/**
+	 * check version of the program in config.json file. Throw an exception if it is not the latest version
+	 * @param config
+	 */
+	void ConverterJSON::checkVersion(nlohmann::json const &config){
 		try{
-			if (found["config"]["version"] != this->version)
+			if (config["config"]["version"] != this->version)
 				throw WrongVersionException();
 		}
 		catch (WrongVersionException &x){
 			std::cerr << x.what();
 		}
-
-		//get list of files from InvertedIndex class and update config.json "files"
-		found["last update"] = this->getTimeStamp(); //dBUpdateTime;
-		found["files"] = this->getFileList(ind);
-		std::cout<<"JSON module initialized\n";
 	}
 
-	nlohmann::json ConverterJSON::getConfigData(){
-		nlohmann::json found;
-		std::ifstream input;
-
-		//throw error if config.json file is missing
-		try {
-			input.open("config.json");
-			if (!input.is_open())
-				throw ConfigMissingException();
-		}
-		catch(ConfigMissingException &x) {
-			std::cerr << x.what();
-		}
-		input >> found;
-		input.close();
-		return found;
-	}
-
+	/**
+ * get current timestamp and return it as a string
+ * @return date of string in format YY/MM/DD HH::MM::SS
+ */
 	std::string ConverterJSON::getTimeStamp(){
 		std::time_t t = std::time(nullptr);
 		std::tm *local = std::localtime(&t);
@@ -113,25 +128,24 @@ public:
 	 */
 	void ConverterJSON::indexingRequired(bool &needUpdate){
 		while (true) {
+			std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 			nlohmann::json found;
 			std::ifstream input("config.json");
 			input >> found;
 			std::string date = found["last update"];
-			int interval = found["update interval minutes"];
+			int interval = found["config"]["update interval minutes"];
 			std::stringstream stream(date);
 			std::tm lastUpdate;
 			stream >> std::get_time(&lastUpdate, "%y/%m/%d %H:%M:%S");
 			std::time_t t = std::time(nullptr);
 			std::tm *local = std::localtime(&t);
-			if (local->tm_min - lastUpdate.tm_min > interval) {
+			if (local->tm_min - lastUpdate.tm_min >= interval && !needUpdate) {
 				std::cout << "update was requested!\n";
 				needUpdate = true;
-				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-				needUpdate = false;
 			}
 			else {
 				std::cout << "update not required\n";
-				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+//				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 			}
 		}
 	}
@@ -139,9 +153,9 @@ public:
 	/**
 	 initialize list of files for search server. Performed at server startup and when requested by user
 	 * */
-	nlohmann::json ConverterJSON::getFileList(InvertedIndex const &ind){
+	nlohmann::json ConverterJSON::getFileList(){
 		std::map<std::filesystem::path,int> files;
-		files = ind.getFilesFromIndex();
+		files = _index.getFilesFromIndex();
 		nlohmann::json f = nlohmann::json::array();
 		for (auto item:files) {
 			f.emplace_back(item.first);
@@ -149,12 +163,35 @@ public:
 		return f;
 	}
 
-	void ConverterJSON::updateFileList(nlohmann::json const &files){
+	/**
+ * read file list from InvertedIndex class and update config.json list.
+ * put a timestamp when the list was updated
+ * @param ind
+ */
+	void ConverterJSON::updateFileList(){
+		nlohmann::json config = this->getConfigData();
+		config["files"] = this->getFileList();
+		config["last update"] = this->getTimeStamp(); //dBUpdateTime;
 		std::ofstream output ("config.json");
-		output << std::setw(4) << files << "\n";
+		output << std::setw(4) << config << "\n";
 		output.close();
 	}
 
+	/**
+	 * monitor flag indexComplete and update database when commanded
+	 * @param indexComplete
+	 */
+//	void ConverterJSON::periodicIndexing(bool &indexComplete){
+//		while (true) {
+//			std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+//			if (indexComplete) {
+//				std::cout << "initiate json update\n";
+//				this->getFileList();
+//				this->updateFileList();
+//				indexComplete = false;
+//			}
+//		}
+//	}
 
 	/**
 	* Метод считывает поле max_responses для определения предельного

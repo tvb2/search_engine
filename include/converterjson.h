@@ -1,7 +1,7 @@
 #ifndef SEARCH_ENGINE_CONVERTERJSON_H
 #define SEARCH_ENGINE_CONVERTERJSON_H
 #include "invertedindex.h"
-#include "searchserver.h"
+#include "relativeindex.h"
 #include "nlohmann/json.hpp"
 #include <vector>
 #include <string>
@@ -9,11 +9,26 @@
 class ConverterJSON{
 private:
 	std::string version = "0.1";
+	InvertedIndex const &_index;
 public:
 	ConverterJSON(InvertedIndex const &ind);
 
+	/**
+	 * read data from config.json
+	 * @return contents of config.json of json datatype
+	 */
 	nlohmann::json getConfigData();
 
+	/**
+	 * check version of the program in config.json file. Throw an exception if it is not the latest version
+	 * @param config
+	 */
+	void checkVersion(nlohmann::json const &config);
+
+	/**
+	 * get current timestamp and return it as a string
+	 * @return date of string in format YY/MM/DD HH::MM::SS
+	 */
 	std::string getTimeStamp();
 
 	/**
@@ -32,16 +47,26 @@ public:
 	/**
 	 initialize list of files for search server. Performed at server startup and when requested by user
 	 * */
-	nlohmann::json getFileList(InvertedIndex const &ind);
+	nlohmann::json getFileList();
 
+	/**
+	 * read file list from InvertedIndex class and update config.json list.
+	 * put a timestamp when the list was updated
+	 * @param ind
+	 */
 	void updateFileList();
 
+	/**
+	 * monitor flag indexComplete and update database when commanded
+	 * @param indexComplete
+	 */
+	void periodicIndexing(bool &indexComplete);
 
-		/**
-		* Метод считывает поле max_responses для определения предельного
-		* количества ответов на один запрос
-		* @return
-		*/
+	/**
+	* Метод считывает поле max_responses для определения предельного
+	* количества ответов на один запрос
+	* @return
+	*/
 	int getResponsesLimit();
 
 	/**
@@ -50,6 +75,11 @@ public:
 	*/
 	std::vector<std::string> getRequests();
 
+	/**
+	 * compose a name in the answers.json file
+	 * @param i is answer number
+	 * @return string in format of "requestXXX"
+	 */
 	std::string createName(size_t const i);
 
 	/**

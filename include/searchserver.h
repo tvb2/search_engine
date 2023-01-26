@@ -13,7 +13,7 @@ public:
 	* чтобы SearchServer мог узнать частоту слов встречаемых в
 	запросе
 	*/
-	SearchServer(InvertedIndex& idx);
+	SearchServer(InvertedIndex &idx);
 
 	 /**
 	 Calculate Absolute index for a given request
@@ -37,7 +37,7 @@ public:
 	std::vector<std::vector<RelativeIndex>> search(const std::vector<std::string>& queries_input);
 
 
-		void printResult();
+	void printResult();
 
 	/**
 	 * get search result as a vector of sorted Relative index
@@ -48,7 +48,7 @@ public:
 	};
 
 private:
-	InvertedIndex _index;
+	InvertedIndex &_index;
 	std::vector<std::vector<RelativeIndex>> result;
 };
 

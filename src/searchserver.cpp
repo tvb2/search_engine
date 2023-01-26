@@ -4,7 +4,7 @@
 
 #define DEBUG_CONSTRUCTOR
 
-SearchServer::SearchServer(InvertedIndex& idx) : _index(idx){
+SearchServer::SearchServer(InvertedIndex &idx) : _index(idx){
 #ifdef DEBUG_CONSTRUCTOR
 	std::cout<<"search sever initialized!\n";
 #endif
@@ -86,9 +86,26 @@ SearchServer::SearchServer(InvertedIndex& idx) : _index(idx){
 		return result;
 	}
 
-//	void SearchServer::printResult(){
-//		for (std::vector<RelativeIndex>::const_reverse_iterator it = result.crbegin(); it != result.crend(); ++it){
-//			std::cout << "doc: " <<it->doc_id << ", filename: " << _index.getFilePath(it->doc_id).filename() << ", rank: " << it->rank <<"\n";
-//		}
-//
-//	}
+	/**
+	 * print search result to terminal. Maximum results to display is 5 (hardcoded)
+	 */
+	void SearchServer::printResult(){
+		size_t requests = 1;
+		for (auto it = result.begin(); it != result.end(); ++it){
+			std::cout<<"Request" << requests <<" results:\n";
+			++requests;
+			size_t count = 1;
+			for (auto itRes = it->crbegin(); itRes != it->crend() && count <= 5; ++itRes) {
+				if (itRes->rank == -1){
+					std::cout << "\t" << "no results found!\n";
+				}
+				else {
+					std::cout  << "\t" << "doc: " << itRes->doc_id << ", filename: "
+					          << _index.getFilePath(itRes->doc_id).filename()
+					          << ", rank: " << itRes->rank << "\n";
+					++count;
+				}
+			}
+		}
+
+	}

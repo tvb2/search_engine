@@ -1,4 +1,5 @@
 #include "invertedindex.h"
+#include "converterjson.h"
 #include <fstream>
 #include <filesystem>
 #include <iostream>
@@ -14,7 +15,7 @@
 	 * Constructor
 	 * */
 	InvertedIndex::InvertedIndex () {
-		indexDB();
+		updateIndexDB();
 
 	#ifdef DEBUG_CONSTRUCTOR
 		for (auto it:files){
@@ -55,11 +56,11 @@
 	}
 }
 
+	std::mutex indexAccess;
 	/**
 	 Perform one file indexation
 	 */
-	std::mutex indexAccess;
-	void InvertedIndex::indexFile(size_t fileNum){
+	void InvertedIndex::updateIndexFile(size_t fileNum){
 	std::string word;
 	std::stringstream stream(docs[fileNum]);
 	while (!stream.eof()) {
@@ -97,7 +98,7 @@
 	/**
 	 Perform database indexation
 	 * */
-	 void InvertedIndex::indexDB() {
+	void InvertedIndex::updateIndexDB() {
 		auto start = std::chrono::high_resolution_clock::now();
 		this->setFilesToIndex();
 		this->updateDocumentBase();
@@ -112,7 +113,7 @@
 			size_t ind = i;
 			for (size_t t = 0; t < th.size(); ++t) {
 				size_t ind = i + t;
-				th[t] = std::thread{&InvertedIndex::indexFile, this, std::ref(ind)};
+				th[t] = std::thread{&InvertedIndex::updateIndexFile, this, std::ref(ind)};
 				std::this_thread::sleep_for(std::chrono::milliseconds(50));
 			}
 			for (size_t t = 0; t < th.size(); ++t) {
@@ -127,6 +128,22 @@
 //		this->printIndex();
 #endif
 }
+
+	/**
+	 * monitor flag needUpdate and re-index database when commanded
+	 * @param needUpdate
+	 */
+	void InvertedIndex::periodicIndexing(bool &needUpdate, bool &indexComplete){
+		while (true) {
+			std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+			if (needUpdate) {
+				std::cout << "initiate db update\n";
+				this->updateIndexDB();
+				needUpdate = false;
+				indexComplete = true;
+			}
+		}
+	}
 
 	/**
 	 Search dir for files to be indexed. File extensions are stored in extensions vector
@@ -163,16 +180,16 @@
 		return it->first;
 	}
 
-/**
-* Метод определяет количество вхождений слова word в загруженной базе
-документов
-* @param word слово, частоту вхождений которого необходимо определить
-* @return возвращает подготовленный список с частотой слов
-*/
-std::vector<Entry> InvertedIndex::getWordCount(const std::string& word){
-	//std::vector<Entry> result;
-	return this->index[word];
-}
+	/**
+	* Метод определяет количество вхождений слова word в загруженной базе
+	документов
+	* @param word слово, частоту вхождений которого необходимо определить
+	* @return возвращает подготовленный список с частотой слов
+	*/
+	std::vector<Entry> InvertedIndex::getWordCount(const std::string& word){
+		//std::vector<Entry> result;
+		return this->index[word];
+	}
 
 
 

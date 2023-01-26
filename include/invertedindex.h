@@ -27,13 +27,19 @@ public:
 	/**
 	 Perform one file indexation
 	 */
-	//void indexDB(std::string const &doc, size_t fileNum);
-	void indexFile(size_t fileNum);
+	//void updateIndexDB(std::string const &doc, size_t fileNum);
+	void updateIndexFile(size_t fileNum);
 
 	/**
 	 Perform database indexation
 	 * */
-	 void indexDB();
+	void updateIndexDB();
+
+	/**
+	 * monitor flag needUpdate and re-index database when commanded
+	 * @param needUpdate
+	 */
+	void periodicIndexing(bool &needUpdate, bool &indexComplete);
 
 	/**
 	 * 	 Search dir for files to be indexed. File extensions are stored in extensions vector
