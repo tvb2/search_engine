@@ -39,7 +39,7 @@ public:
 	 * monitor flag needUpdate and re-index database when commanded
 	 * @param needUpdate
 	 */
-	void periodicIndexing(bool &needUpdate, bool &indexComplete);
+	void periodicIndexing(bool const &needUpdate, bool &indexComplete);
 
 	/**
 	 * 	 Search dir for files to be indexed. File extensions are stored in extensions vector

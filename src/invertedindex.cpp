@@ -133,13 +133,12 @@
 	 * monitor flag needUpdate and re-index database when commanded
 	 * @param needUpdate
 	 */
-	void InvertedIndex::periodicIndexing(bool &needUpdate, bool &indexComplete){
+	void InvertedIndex::periodicIndexing(bool const &needUpdate, bool &indexComplete){
 		while (true) {
 			std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 			if (needUpdate) {
 				std::cout << "initiate db update\n";
 				this->updateIndexDB();
-				needUpdate = false;
 				indexComplete = true;
 			}
 		}

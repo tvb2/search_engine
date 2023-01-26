@@ -60,7 +60,7 @@ public:
 	 * monitor flag indexComplete and update database when commanded
 	 * @param indexComplete
 	 */
-	void periodicIndexing(bool &indexComplete);
+	void periodicIndexing(bool &indexComplete, bool &needUpdate);
 
 	/**
 	* Метод считывает поле max_responses для определения предельного

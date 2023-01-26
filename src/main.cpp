@@ -38,10 +38,10 @@ int main () {
 	bool indexComplete = false;
 	std::thread monitor(&ConverterJSON::indexingRequired, json, std::ref(needUpdate));
 	std::thread updateIndex(&InvertedIndex::periodicIndexing, index, std::ref(needUpdate), std::ref(indexComplete));
-//	std::thread updateJSON(&ConverterJSON::periodicIndexing, json, std::ref(indexComplete));
+	std::thread updateJSON(&ConverterJSON::periodicIndexing, json, std::ref(indexComplete), std::ref(needUpdate));
 	monitor.detach();
 	updateIndex.detach();
-//	updateJSON.detach();
+	updateJSON.detach();
 
 	/**
 	 * run search by command from terminal. Search requests are taken from requests.json

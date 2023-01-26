@@ -140,13 +140,13 @@ public:
 			std::time_t t = std::time(nullptr);
 			std::tm *local = std::localtime(&t);
 			if (local->tm_min - lastUpdate.tm_min >= interval && !needUpdate) {
-				std::cout << "update was requested!\n";
+				std::cout << "update was requested at "<< std::put_time(local,"%y/%m/%d %H:%M:%S") <<"\n";
 				needUpdate = true;
 			}
-			else {
-				std::cout << "update not required\n";
+//			else {
+//				std::cout << "update not required\n";
 //				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-			}
+//			}
 		}
 	}
 
@@ -181,17 +181,20 @@ public:
 	 * monitor flag indexComplete and update database when commanded
 	 * @param indexComplete
 	 */
-//	void ConverterJSON::periodicIndexing(bool &indexComplete){
-//		while (true) {
-//			std::this_thread::sleep_for(std::chrono::milliseconds(1500));
-//			if (indexComplete) {
-//				std::cout << "initiate json update\n";
-//				this->getFileList();
-//				this->updateFileList();
-//				indexComplete = false;
-//			}
-//		}
-//	}
+	void ConverterJSON::periodicIndexing(bool &indexComplete, bool &needUpdate){
+		while (true) {
+			std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+			if (indexComplete) {
+				this->getFileList();
+				this->updateFileList();
+				needUpdate = false;
+				indexComplete = false;
+				std::time_t t = std::time(nullptr);
+				std::tm *local = std::localtime(&t);
+				std::cout << "Config.json file list updated at " << std::put_time(local,"%y/%m/%d %H:%M:%S") <<"\n";
+			}
+		}
+	}
 
 	/**
 	* Метод считывает поле max_responses для определения предельного
