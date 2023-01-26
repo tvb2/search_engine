@@ -4,12 +4,8 @@
 #include "searchserver.h"
 #include <string>
 
-#include <filesystem>
-#include <fstream>
 #include <vector>
-#include <map>
 #include <thread>
-#include "sstream"
 
 int main () {
 
@@ -66,12 +62,6 @@ int main () {
 	else {
 		 std::cout << "Wrong command!\n";
 	 }
-//	if (needUpdate) {
-//		index.updateIndexDB();
-//		json.getFileList(index);
-//		json.updateFileList(index);
-//		needUpdate = false;
-//    }
  }
 	std::cout << "Program complete..\n";
 

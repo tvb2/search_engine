@@ -1,5 +1,6 @@
 #ifndef SEARCH_ENGINE_CONVERTERJSON_H
 #define SEARCH_ENGINE_CONVERTERJSON_H
+
 #include "invertedindex.h"
 #include "relativeindex.h"
 #include "nlohmann/json.hpp"

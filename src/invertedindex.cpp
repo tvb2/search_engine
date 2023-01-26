@@ -1,16 +1,13 @@
 #include "invertedindex.h"
-#include "converterjson.h"
-#include <fstream>
 #include <filesystem>
 #include <iostream>
-#include <sstream>
 #include <map>
 #include <vector>
 #include <mutex>
 #include <thread>
 
 // #define DEBUG_CONSTRUCTOR
-#define DEBUG_DBINDEX
+//#define DEBUG_DBINDEX
 	/**
 	 * Constructor
 	 * */
