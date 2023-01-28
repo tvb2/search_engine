@@ -105,15 +105,16 @@
 		for (; i < files.size() - th.size() + 1; i += th.size()) {
 #endif
 #ifdef DEBUG_DBINDEX
-		for (; i < 10; i += th.size()) {
+		for (; i < 10 && i < this->files.size(); i += th.size()) {
 #endif
-			size_t ind = i;
-			for (size_t t = 0; t < th.size(); ++t) {
+			size_t ind = i, threads = 0;
+			for (size_t t = 0; t < th.size() && t < this->files.size(); ++t) {
 				size_t ind = i + t;
 				th[t] = std::thread{&InvertedIndex::updateIndexFile, this, std::ref(ind)};
 				std::this_thread::sleep_for(std::chrono::milliseconds(50));
+				++threads;
 			}
-			for (size_t t = 0; t < th.size(); ++t) {
+			for (size_t t = 0; t < threads; ++t) {
 				th[t].join();
 			}
 		}
