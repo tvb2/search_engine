@@ -4,6 +4,7 @@
 #include "invertedindex.h"
 #include "relativeindex.h"
 #include "nlohmann/json.hpp"
+
 #include <vector>
 #include <string>
 

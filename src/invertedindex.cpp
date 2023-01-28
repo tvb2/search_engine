@@ -7,7 +7,7 @@
 #include <thread>
 
 // #define DEBUG_CONSTRUCTOR
-//#define DEBUG_DBINDEX
+#define DEBUG_DBINDEX
 	/**
 	 * Constructor
 	 * */
@@ -186,6 +186,3 @@
 		//std::vector<Entry> result;
 		return this->index[word];
 	}
-
-
-
