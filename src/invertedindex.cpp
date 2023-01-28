@@ -7,7 +7,7 @@
 #include <thread>
 
 // #define DEBUG_CONSTRUCTOR
-#define DEBUG_DBINDEX
+//#define DEBUG_DBINDEX
 	/**
 	 * Constructor
 	 * */
@@ -102,7 +102,7 @@
 		size_t i = 0;
 		std::vector<std::thread> th(std::thread::hardware_concurrency());
 #ifndef DEBUG_DBINDEX
-		for (; i < files.size() - th.size() + 1; i += th.size()) {
+		for (; i < this->files.size() - th.size() + 1 && i < this->files.size(); i += th.size()) {
 #endif
 #ifdef DEBUG_DBINDEX
 		for (; i < 10 && i < this->files.size(); i += th.size()) {

@@ -1,10 +1,8 @@
 #include <vector>
 #include <string>
 #include "invertedindex.h"
-#include "relativeindex.h"
 #include "gtest/gtest.h"
 #include "entry.h"
-#include <fstream>
 #include <sstream>
 #include <filesystem>
 
@@ -63,7 +61,9 @@ TestInvertedIndexFunctionality(docs, requests, expected);
 
 TEST(TestCaseInvertedIndex, TestBasic2) {
 	const std::vector<std::string> docs = {
-
+	/*
+	 * corrected errors in the expected count and in cappuccino spelling
+	 * */
 			"milk milk milk milk water water water",
 			"milk water water",
 			"milk milk milk milk milk water water water water water",

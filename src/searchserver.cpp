@@ -82,7 +82,6 @@ SearchServer::SearchServer(InvertedIndex &idx) : _index(idx){
 			result.emplace_back(temp);
 			temp.clear();
 		}
-//
 		return result;
 	}
 
