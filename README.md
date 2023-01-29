@@ -1,5 +1,13 @@
 # LeoT is a final project for a C++ developer beginner course.
 
+[Objective](https://github.com/tvb2/search_engine/edit/main/README.md#objective)
+
+[General overview](https://github.com/tvb2/search_engine/edit/main/README.md#general-overview)
+
+[Features](https://github.com/tvb2/search_engine/edit/main/README.md#features)
+
+[Installation](https://github.com/tvb2/search_engine/edit/main/README.md#installation)
+
 ## Objective
 <p>Create a CLI search server with following capabilities</p>
 <ul>
@@ -40,3 +48,5 @@
 <p>Indexing of database is performed in multiple threads. Number of threads is determined dynamically during runtime by hardware concurrency.</p>
 <p>Monitoring and automatic database indexing is performed in the background using threads (detached). Time between indexing is defined in config.json in minutes. Initially, all re-indexing is performed over all files. However, in future can implement re-indexing of only new/modified files which should considerably reduce time for indexing. Initially, a database of about 1100 files of less than 1000 words each was used and indexing in maximum 4 threads takes about 95 seconds.</p>
 <p>Number of search results to be written to answers.json is defined by config.json setting.</p>
+
+## Installation
