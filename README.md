@@ -1,4 +1,4 @@
-# search_engine is a final project for a C++ developer beginner course.
+# LeoT is a final project for a C++ developer beginner course.
 
 <h1>Objective</h1>
 <p>Create a CLI search server with following capabilities</p>
@@ -32,3 +32,10 @@
           <li>exit. stop executing the program</li>
       </ul> 
   </p>
+
+<h1>Features</h1>
+<p>Nlohmann library used to conveniently handle JSON format.</p>
+<p>File list is stored in a map for quick access by path. This however leads to doc_id not corresponding directly to file names. It is easy to find which file corresponds to doc_id (and it is implemented when displaying search results in the terminal. </p>
+<p>Indexing of database is performed in multiple threads. Number of threads is determined dynamically during runtime by hardware concurrency.</p>
+<p>Monitoring and automatic database indexing is performed in the background using threads (detached). Time between indexing is defined in config.json in minutes. Initially, all re-indexing is performed over all files. However, in future can implement re-indexing of only new/modified files which should considerably reduce time for indexing. Initially, a database of about 1100 files of less than 1000 words each was used and indexing in maximum 4 threads takes about 95 seconds.</p>
+<p>Number of search results to be written to answers.json is defined by config.json setting.</p>
