@@ -35,6 +35,27 @@ for (size_t i = 0; i < result.size(); ++i){
 ASSERT_EQ(result, expected);
 }
 
+void prepareSearchTestFiles(const std::vector<std::string> &docs){
+	std::filesystem::create_directory("database");
+	std::filesystem::path path = std::filesystem::current_path();
+	path /= "database";
+	//clear database/ before the test
+	for (auto &p: std::filesystem::recursive_directory_iterator(path)){
+		std::filesystem::remove(p);
+	}
+
+	path = std::filesystem::current_path();
+	//create test files in the database/ folder
+	for (size_t i = 0; i< docs.size(); ++i) {
+		std::string test = "database\\test" + std::to_string(i) + ".txt";
+		path /= test;
+		std::ofstream testFile(path);
+		testFile << docs[i] << " ";
+		testFile.close();
+		path = std::filesystem::current_path();
+	}
+}
+
 TEST(TestCaseSearchServer, TestSimple) {
 const std::vector<std::string> docs = {
 
@@ -63,26 +84,7 @@ const std::vector<std::string> docs = {
 			};
 	const std::vector<std::string> request = {"milk water", "sugar"};
 
-	std::filesystem::create_directory("database");
-	std::filesystem::path path = std::filesystem::current_path();
-	path /= "database";
-	//clear database/ before the test
-	for (auto &p: std::filesystem::recursive_directory_iterator(path)){
-		std::filesystem::remove(p);
-
-	}
-
-	path = std::filesystem::current_path();
-	//create test files in the database/ folder
-	for (size_t i = 0; i< docs.size(); ++i) {
-		std::string test = "database\\test" + std::to_string(i) + ".txt";
-		path /= test;
-		std::ofstream testFile(path);
-		testFile << docs[i] << " ";
-		testFile.close();
-		path = std::filesystem::current_path();
-	}
-
+	prepareSearchTestFiles(docs);
 	TestSearchServerFunctionality(docs, request, expected);
 
 }
@@ -125,25 +127,7 @@ TEST(TestCaseSearchServer, TestTop5) {
 					{16, 0.666666687}
 			}
 	};
-	std::filesystem::create_directory("database");
-	std::filesystem::path path = std::filesystem::current_path();
-	path /= "database";
-	//clear database/ before the test
-	for (auto &p: std::filesystem::recursive_directory_iterator(path)){
-		std::filesystem::remove(p);
-
-	}
-
-	path = std::filesystem::current_path();
-	//create test files in the database/ folder
-	for (size_t i = 0; i< docs.size(); ++i) {
-		std::string test = "database\\test" + std::to_string(i) + ".txt";
-		path /= test;
-		std::ofstream testFile(path);
-		testFile << docs[i] << " ";
-		testFile.close();
-		path = std::filesystem::current_path();
-	}
+	prepareSearchTestFiles(docs);
 
 	TestSearchServerFunctionality(docs, request, expected);
 }
