@@ -63,6 +63,7 @@ const std::vector<std::string> docs = {
 			};
 	const std::vector<std::string> request = {"milk water", "sugar"};
 
+	std::filesystem::create_directory("database");
 	std::filesystem::path path = std::filesystem::current_path();
 	path /= "database";
 	//clear database/ before the test
@@ -124,6 +125,7 @@ TEST(TestCaseSearchServer, TestTop5) {
 					{16, 0.666666687}
 			}
 	};
+	std::filesystem::create_directory("database");
 	std::filesystem::path path = std::filesystem::current_path();
 	path /= "database";
 	//clear database/ before the test

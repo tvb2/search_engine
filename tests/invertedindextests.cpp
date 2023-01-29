@@ -20,6 +20,28 @@ void TestInvertedIndexFunctionality(
 	ASSERT_EQ(result, expected);
 }
 
+void prepareFolders(){
+	std::filesystem::create_directory("database");
+	std::filesystem::path path = std::filesystem::current_path();
+	path /= "database";
+	//clear database/ before the test
+	for (auto &p: std::filesystem::recursive_directory_iterator(path)){
+		std::filesystem::remove(p);
+
+	}
+
+	path = std::filesystem::current_path();
+	//create test files in the database/ folder
+	for (size_t i = 0; i< docs.size(); ++i) {
+		std::string test = "database\\test" + std::to_string(i) + ".txt";
+		path /= test;
+		std::ofstream testFile(path);
+		testFile << docs[i] << " ";
+		testFile.close();
+		path = std::filesystem::current_path();
+	}
+}
+
 TEST(TestCaseInvertedIndex, TestBasic) {
 const std::vector<std::string> docs = {
 
@@ -27,6 +49,7 @@ const std::vector<std::string> docs = {
 		"big ben is the nickname for the Great bell of the striking clock"
 
 };
+	std::filesystem::create_directory("database");
 	std::filesystem::path path = std::filesystem::current_path();
 	path /= "database";
 	//clear database/ before the test
@@ -87,6 +110,7 @@ TEST(TestCaseInvertedIndex, TestBasic2) {
 
 			}
 	};
+	std::filesystem::create_directory("database");
 	std::filesystem::path path = std::filesystem::current_path();
 	path /= "database";
 
@@ -125,6 +149,7 @@ TEST(TestCaseInvertedIndex, TestInvertedIndexMissingWord) {
 
 			}
 	};
+	std::filesystem::create_directory("database");
 	std::filesystem::path path = std::filesystem::current_path();
 	path /= "database";
 
