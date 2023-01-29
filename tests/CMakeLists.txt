@@ -4,8 +4,18 @@ project(Google_tests)
 
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 
-# 'lib' is the folder with Google Test sources
-add_subdirectory(lib)
+include(FetchContent)
+
+FetchContent_Declare(
+        googletest
+        URL
+        https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
+)
+
+FetchContent_Declare(json
+        GIT_REPOSITORY https://github.com/ArthurSonzogni/nlohmann_json_cmake_fetchcontent
+        GIT_TAG v3.11.2
+        )
 
 include_directories(
         ${gtest_SOURCE_DIR}/include
@@ -15,7 +25,10 @@ include_directories(
 
 set(gtest_disable_pthreads on)
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest json)
 enable_testing()
+
+
 
 # 'Google_Tests_run' is the target name
 add_executable(Google_Tests_run
@@ -27,5 +40,7 @@ add_executable(Google_Tests_run
         invertedindextests.cpp searchservertests.cpp
         )
 
-target_link_libraries(Google_Tests_run gtest gtest_main)
-target_include_directories(Google_Tests_run PUBLIC ../nlohmann_json/include)
+include(GoogleTest)
+gtest_discover_tests(Google_Tests_run)
+
+target_link_libraries(Google_Tests_run PUBLIC gtest gtest_main nlohmann_json::nlohmann_json)

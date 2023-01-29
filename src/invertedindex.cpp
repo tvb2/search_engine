@@ -55,7 +55,7 @@
 
 	std::mutex indexAccess;
 	/**
-	 Perform one file indexation
+	 Perform single file indexation
 	 */
 	void InvertedIndex::updateIndexFile(size_t fileNum){
 	std::string word;

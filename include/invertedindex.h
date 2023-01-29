@@ -12,7 +12,7 @@ class InvertedIndex{
 private:
 	std::vector<std::string> docs;
 	std::map<std::string, std::vector<Entry>> index;
-	std::vector<std::string> extensions {".txt", ".doc"};
+	std::vector<std::string> extensions {".txt"};
 	std::map<std::filesystem::path,int> files;
 
 public:
@@ -47,7 +47,7 @@ public:
 	void setFilesToIndex();
 
 	/**
-	*
+	* return full list of files used for indexing the database
 	* @return map of std::filesystem::path with the files used in index
 	*/
 	const std::map<std::filesystem::path,int>& getFilesFromIndex() const {
@@ -55,8 +55,7 @@ public:
 	}
 
 	/**
-	* Метод определяет количество вхождений слова word в загруженной базе
-	документов
+	* calculate number of occurrence of a word in the database
 	* @param word слово, частоту вхождений которого необходимо определить
 	* @return возвращает подготовленный список с частотой слов
 	*/
@@ -70,7 +69,7 @@ public:
 	const std::filesystem::path& getFilePath(size_t const &doc_id);
 
 	/**
-	 Print index
+	 Print index (used for debug purposes only)
 	*/
 	void printIndex(){
 		for (auto ind:index){
