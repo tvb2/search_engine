@@ -1,6 +1,6 @@
 # LeoT is a final project for a C++ developer beginner course.
 
-<h1>Objective</h1>
+## Objective
 <p>Create a CLI search server with following capabilities</p>
 <ul>
   <li>search performed over text documents in the same location as executable file</li>
@@ -13,7 +13,8 @@
   <li>Separate class for <b>periodic indexing</b> of a database is performed based on configuration settings</li>
   <li><b>Unit testing</b> performed using Google tests module</li>
 </ul>
-<h1>General overview</h1>
+
+## General overview
 <p>Upon startup InvertedIndex class instance starts looking for a 'database' directory and searches all .txt files in it. Creates a list of files, reads them in and performs indexing.</p>
 <p>After that JSON module initializes and attempts to open up config file and reads configuration settings as well as updates list of files for the database. Search requests are read from a requests.json file </p>
 <p>Then Search Server is started and performes search over the index, handing over results to JSON module and recorded to answers.json file. Additionally results are displayed in the terminal</p>
@@ -33,7 +34,7 @@
       </ul> 
   </p>
 
-<h1>Features</h1>
+## Features
 <p>Nlohmann library used to conveniently handle JSON format.</p>
 <p>File list is stored in a map for quick access by path. This however leads to doc_id not corresponding directly to file names. It is easy to find which file corresponds to doc_id (and it is implemented when displaying search results in the terminal. </p>
 <p>Indexing of database is performed in multiple threads. Number of threads is determined dynamically during runtime by hardware concurrency.</p>
