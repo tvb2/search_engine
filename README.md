@@ -1,12 +1,12 @@
 # LeoT is a final project for a C++ developer beginner course.
 
-[Objective](https://github.com/tvb2/search_engine/edit/main/README.md#objective)
+[Objective](#objective)
 
-[General overview](https://github.com/tvb2/search_engine/edit/main/README.md#general-overview)
+[General overview](#general-overview)
 
-[Features](https://github.com/tvb2/search_engine/edit/main/README.md#features)
+[Features](#features)
 
-[Installation](https://github.com/tvb2/search_engine/edit/main/README.md#installation)
+[Installation](#installation)
 
 ## Objective
 <p>Create a CLI search server with following capabilities</p>
@@ -50,3 +50,4 @@
 <p>Number of search results to be written to answers.json is defined by config.json setting.</p>
 
 ## Installation
+<p>Compile the program in Debug or Release modes. CMake is configured to copy files: config.json, requests.json, libstdc++-6.dll and 'database' folder to the build directory to allow program operation 'out of the box'. 'database' folder contains several text files for testing purposes.</p>
