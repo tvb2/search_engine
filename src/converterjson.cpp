@@ -154,7 +154,7 @@ public:
 	 initialize list of files for search server. Performed at server startup and when requested by user
 	 * */
 	nlohmann::json ConverterJSON::getFileList(){
-		std::map<std::filesystem::path,int> files;
+		std::map<std::filesystem::path,std::filesystem::file_time_type> files;
 		files = _index.getFilesFromIndex();
 		nlohmann::json f = nlohmann::json::array();
 		for (auto item:files) {

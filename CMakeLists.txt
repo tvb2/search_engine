@@ -14,7 +14,7 @@ configure_file(database/file002.txt src/database/file002.txt COPYONLY)
 configure_file(database/file003.txt src/database/file003.txt COPYONLY)
 configure_file(database/file004.txt src/database/file004.txt COPYONLY)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 include(FetchContent)
 

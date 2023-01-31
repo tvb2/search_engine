@@ -7,13 +7,15 @@
 #include <filesystem>
 #include <fstream>
 #include "entry.h"
+#include <ctime>
 
 class InvertedIndex{
 private:
 	std::vector<std::string> docs;
 	std::map<std::string, std::vector<Entry>> index;
 	std::vector<std::string> extensions {".txt"};
-	std::map<std::filesystem::path,int> files;
+	std::map<std::filesystem::path,std::filesystem::file_time_type> files;
+	std::map<std::filesystem::path,std::filesystem::file_time_type> newFiles;
 
 public:
 		InvertedIndex();
@@ -50,7 +52,7 @@ public:
 	* return full list of files used for indexing the database
 	* @return map of std::filesystem::path with the files used in index
 	*/
-	const std::map<std::filesystem::path,int>& getFilesFromIndex() const {
+	const std::map<std::filesystem::path,std::filesystem::file_time_type>& getFilesFromIndex() const {
 		return files;
 	}
 

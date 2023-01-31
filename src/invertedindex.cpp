@@ -5,6 +5,7 @@
 #include <vector>
 #include <mutex>
 #include <thread>
+#include <ctime>
 
 // #define DEBUG_CONSTRUCTOR
 //#define DEBUG_DBINDEX
@@ -142,6 +143,20 @@
 		}
 	}
 
+	//from cpp reference
+	std::time_t to_timeT(std::filesystem::file_time_type const& ftime) {
+		std::time_t cftime = std::chrono::system_clock::to_time_t(
+				std::chrono::file_clock::to_sys(ftime));
+		return cftime;
+	}
+	std::string to_string(std::filesystem::file_time_type const& ftime) {
+		std::time_t cftime = std::chrono::system_clock::to_time_t(
+				std::chrono::file_clock::to_sys(ftime));
+		std::string str = std::asctime(std::localtime(&cftime));
+		str.pop_back();  // rm the trailing '\n' put by `asctime`
+		return str;
+	}
+
 	/**
 	 Search dir for files to be indexed. File extensions are stored in extensions vector
 	 */
@@ -150,14 +165,30 @@
 		std::filesystem::path path = std::filesystem::current_path();
 		path /= "database";
 		std::filesystem::recursive_directory_iterator it;
-
 		for (auto extension:extensions) {
 			for (auto &p: std::filesystem::recursive_directory_iterator(path)) {
 				if (p.is_regular_file()) {
 					if (p.path().extension() == extension) {
 						//here could include logic to track new files to only index the newly found files.
+						//if some files missing - need to delete all index values for this file and remove file from files list
 						//Not implemented here as not required by the task.
-						files.emplace(p.path(),1);
+						std::filesystem::file_time_type ftime = std::filesystem::last_write_time(p);
+						std::string lastTime = to_string(ftime);
+						std::cout << "File write time is " << lastTime << "\n";
+						//new file
+						if (files.find(p.path()) == files.end()){
+							newFiles.emplace(p.path(),ftime);
+							files.emplace(p.path(), ftime);
+						}
+						//file exists
+						else {
+							//file was modified since last indexing
+							if (files[p.path()] != ftime) {
+								newFiles[p.path()] = ftime;
+								std::cout << "differences in file: " << p.path().filename() << "\n";
+								files[p.path()] = ftime;
+							}
+						}
 					}
 				}
 			}
