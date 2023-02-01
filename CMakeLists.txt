@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.23)
-project(search_engine)
+project(search_engine VERSION 0.2)
 
 # copy configuration and requests files into build directory
 configure_file(config.json src/config.json COPYONLY)

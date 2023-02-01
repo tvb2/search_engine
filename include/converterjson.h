@@ -10,7 +10,7 @@
 
 class ConverterJSON{
 private:
-	std::string version = "0.1";
+	std::string version = "0.2";
 	InvertedIndex const &_index;
 public:
 	ConverterJSON(InvertedIndex const &ind);

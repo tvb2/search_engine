@@ -3,7 +3,7 @@
     "max_responses": 5,
     "name": "WaP LT",
     "update interval minutes": 1,
-    "version": "0.1"
+    "version": "0.2"
   },
   "files": [
     "C:\\Users\\tvb2\\CLionProjects\\search_engine\\cmake-build-debug\\src\\database\\New folder\\file001.txt",
