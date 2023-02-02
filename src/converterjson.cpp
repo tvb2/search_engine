@@ -24,8 +24,14 @@ public:
 		return "config.json has incorrect file version!\n";
 	}
 };
+class FileNotValidException : public std::exception {
+public:
+	const char *what() const noexcept override {
+		return "file not found or read error: ";
+	}
+};
 
-	ConverterJSON::ConverterJSON (InvertedIndex const &ind) : _index(ind) {
+	ConverterJSON::ConverterJSON () {
 		//get data from config.json
 		nlohmann::json config = this->getConfigData();
 
@@ -33,7 +39,7 @@ public:
 		this->checkVersion(config);
 
 		//get list of files from InvertedIndex class and update config.json "files"
-		this->updateFileList();
+//		this->updateFileList();
 		std::cout<<"JSON module initialized\n";
 	}
 
@@ -93,22 +99,35 @@ public:
 	* в config.json
 	*/
 	std::vector<std::string> ConverterJSON::getTextDocuments(){
-		std::vector<std::string> result;
+		//reading json data
 		nlohmann::json config;
 		std::ifstream f("config.json");
 		f >> config;
 		nlohmann::json files = nlohmann::json::array();
 		files = config["files"];
+
+		//reading contents of files
+		std::vector<std::string> result;
 		std::ifstream doc;
 		std::string buffer, text;
 		for (auto item:files){
 			doc.open(item);
-			while (!doc.eof()) {
-				std::getline(doc,buffer);
-				text += buffer + " ";
-	//			buffer = "";
+//			std::cout<<"working with file: " << item <<"\n";
+			try{
+				if (!doc.is_open())
+					throw FileNotValidException();
 			}
-				result.emplace_back(buffer);
+			catch(FileNotValidException &x) {
+				std::cerr  << x.what() << item << "\n";
+				continue;
+			}
+			while (!doc.eof()) {
+				std::getline(doc, buffer);
+				text += buffer + " ";
+				buffer = "";
+			}
+			result.emplace_back(text);
+			text = "";
 			doc.close();
 		}
 #ifdef DEBUG_GETEXTDOCUMENTS
@@ -153,6 +172,7 @@ public:
 	/**
 	 initialize list of files for search server. Performed at server startup and when requested by user
 	 * */
+	/*
 	nlohmann::json ConverterJSON::getFileList(){
 		std::map<std::filesystem::path,int> files;
 		files = _index.getFilesFromIndex();
@@ -162,12 +182,13 @@ public:
 		}
 		return f;
 	}
-
+*/
 	/**
  * read file list from InvertedIndex class and update config.json list.
  * put a timestamp when the list was updated
  * @param ind
  */
+/*
 	void ConverterJSON::updateFileList(){
 		nlohmann::json config = this->getConfigData();
 		config["files"] = this->getFileList();
@@ -176,11 +197,12 @@ public:
 		output << std::setw(4) << config << "\n";
 		output.close();
 	}
-
+*/
 	/**
 	 * monitor flag indexComplete and update database when commanded
 	 * @param indexComplete
 	 */
+	/*
 	void ConverterJSON::periodicIndexing(bool &indexComplete, bool &needUpdate){
 		while (true) {
 			std::this_thread::sleep_for(std::chrono::milliseconds(1500));
@@ -195,7 +217,7 @@ public:
 			}
 		}
 	}
-
+*/
 	/**
 	* Метод считывает поле max_responses для определения предельного
 	* количества ответов на один запрос

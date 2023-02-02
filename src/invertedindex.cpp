@@ -12,7 +12,7 @@
 	 * Constructor
 	 * */
 	InvertedIndex::InvertedIndex () {
-		updateIndexDB();
+//		updateIndexDB();
 
 	#ifdef DEBUG_CONSTRUCTOR
 		for (auto it:files){
@@ -36,21 +36,12 @@
 	поиск
 	* @param texts_input содержимое документов
 	*/
-	void InvertedIndex::updateDocumentBase(){
+	void InvertedIndex::updateDocumentBase(std::vector<std::string> input_docs){
 	//clear database before indexation
 	docs.clear();
-	docs.resize(files.size());
-	auto it = files.begin();
-	for (size_t i = 0; i < files.size(); ++i){
-		std::string buffer;
-		std::ifstream current((it++)->first);
-		if (current.is_open()) {
-			while (!current.eof()) {
-				std::getline(current, buffer);
-				docs[i].append(buffer);
-			}
-		}
-	}
+	docs = input_docs;
+//	docs.resize(input_docs.size());
+
 }
 
 	std::mutex indexAccess;
@@ -98,7 +89,7 @@
 	void InvertedIndex::updateIndexDB() {
 		auto start = std::chrono::high_resolution_clock::now();
 		this->setFilesToIndex();
-		this->updateDocumentBase();
+		this->updateDocumentBase(docs);
 		size_t i = 0;
 		std::vector<std::thread> th(std::thread::hardware_concurrency());
 #ifndef DEBUG_DBINDEX

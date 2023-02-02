@@ -10,10 +10,10 @@
 
 class ConverterJSON{
 private:
-	std::string version = "0.2";
-	InvertedIndex const &_index;
+	std::string version = "0.3";
+//	InvertedIndex const &_index;
 public:
-	ConverterJSON(InvertedIndex const &ind);
+	ConverterJSON();
 
 	/**
 	 * read data from config.json
