@@ -40,8 +40,6 @@
 	//clear database before indexation
 	docs.clear();
 	docs = input_docs;
-//	docs.resize(input_docs.size());
-
 }
 
 	std::mutex indexAccess;
@@ -88,19 +86,17 @@
 	 * */
 	void InvertedIndex::updateIndexDB() {
 		auto start = std::chrono::high_resolution_clock::now();
-		this->setFilesToIndex();
-		this->updateDocumentBase(docs);
 		size_t i = 0;
 		std::vector<std::thread> th(std::thread::hardware_concurrency());
 #ifndef DEBUG_DBINDEX
-		for (; i < this->files.size() - th.size() + 1 && i < this->files.size(); i += th.size()) {
+		for (; i < this->files.size() - th.size() + 1 && i < this->docs.size(); i += th.size()) {
 #endif
 #ifdef DEBUG_DBINDEX
-		for (; i < 10 && i < this->files.size(); i += th.size()) {
+		for (; i < 10 && i < this->docs.size(); i += th.size()) {
 #endif
 			size_t ind = i, threads = 0;
-			for (size_t t = 0; t < th.size() && t < this->files.size(); ++t) {
-				size_t ind = i + t;
+			for (size_t t = 0; t < th.size() && t < this->docs.size(); ++t) {
+				ind = i + t;
 				th[t] = std::thread{&InvertedIndex::updateIndexFile, this, std::ref(ind)};
 				std::this_thread::sleep_for(std::chrono::milliseconds(50));
 				++threads;

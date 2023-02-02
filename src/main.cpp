@@ -14,9 +14,10 @@ int main () {
 //	SearchServer server(index);
 	std::cout << "index created.\n";
 	ConverterJSON json;
-	json.getTextDocuments();
+	json.getTextDocuments(json.getConfigData());
 	InvertedIndex index;
-	index.updateDocumentBase(json.getTextDocuments());
+	index.updateDocumentBase(json.getTextDocuments(json.getConfigData()));
+	index.updateIndexDB();
 
 	/**
 	*run the search for the requests from requests.json file. Put results in the answers.json file

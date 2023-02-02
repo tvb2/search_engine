@@ -38,8 +38,6 @@ public:
 		//check programm version and throw error if it doesn't match the latest version
 		this->checkVersion(config);
 
-		//get list of files from InvertedIndex class and update config.json "files"
-//		this->updateFileList();
 		std::cout<<"JSON module initialized\n";
 	}
 
@@ -98,11 +96,7 @@ public:
 	* @return Возвращает список с содержимым файлов перечисленных
 	* в config.json
 	*/
-	std::vector<std::string> ConverterJSON::getTextDocuments(){
-		//reading json data
-		nlohmann::json config;
-		std::ifstream f("config.json");
-		f >> config;
+	std::vector<std::string> ConverterJSON::getTextDocuments(nlohmann::json const &config){
 		nlohmann::json files = nlohmann::json::array();
 		files = config["files"];
 

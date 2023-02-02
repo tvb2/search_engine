@@ -38,7 +38,7 @@ public:
 	* @return Возвращает список с содержимым файлов перечисленных
 	* в config.json
 	*/
-	std::vector<std::string> getTextDocuments();
+	std::vector<std::string> getTextDocuments(nlohmann::json const &config);
 
 	/**
 	 * look at time stamp when indexing was performed last time and advise if re-indexing is needed
