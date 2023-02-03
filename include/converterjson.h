@@ -1,7 +1,6 @@
 #ifndef SEARCH_ENGINE_CONVERTERJSON_H
 #define SEARCH_ENGINE_CONVERTERJSON_H
 
-#include "invertedindex.h"
 #include "relativeindex.h"
 #include "nlohmann/json.hpp"
 
@@ -10,10 +9,10 @@
 
 class ConverterJSON{
 private:
-	std::string version = "0.2";
-	InvertedIndex const &_index;
+	std::string version = "0.3";
+	nlohmann::json config;
 public:
-	ConverterJSON(InvertedIndex const &ind);
+	ConverterJSON();
 
 	/**
 	 * read data from config.json
@@ -25,7 +24,7 @@ public:
 	 * check version of the program in config.json file. Throw an exception if it is not the latest version
 	 * @param config
 	 */
-	void checkVersion(nlohmann::json const &config);
+	void checkVersion();
 
 	/**
 	 * get current timestamp and return it as a string
@@ -47,16 +46,10 @@ public:
 	void indexingRequired(bool &needUpdate);
 
 	/**
-	 initialize list of files for search server. Performed at server startup and when requested by user
-	 * */
-	nlohmann::json getFileList();
-
-	/**
-	 * read file list from InvertedIndex class and update config.json list.
-	 * put a timestamp when the list was updated
-	 * @param ind
+	 * Update time stamp in config.json to indicate when indexing was performed
+	 * @param
 	 */
-	void updateFileList();
+	void setUpdateTimeStamp();
 
 	/**
 	 * monitor flag indexComplete and update database when commanded

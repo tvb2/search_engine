@@ -10,10 +10,15 @@ int main () {
 
 	std::cout<<"Program LeoT  started..\n";
 	std::cout << "creating index... please wait...\n";
-	InvertedIndex index;
-	SearchServer server(index);
+
+//	SearchServer server(index);
 	std::cout << "index created.\n";
-	ConverterJSON json(index);
+	ConverterJSON json;
+	InvertedIndex index(json);
+	index.updateIndexDB();
+	SearchServer server(index);
+
+	std::cout<<"boo\n";
 
 	/**
 	*run the search for the requests from requests.json file. Put results in the answers.json file
@@ -41,16 +46,16 @@ int main () {
 	/**
 	 * run search by command from terminal. Search requests are taken from requests.json
 	 */
- while (true) {
+
+	while (true) {
 	std::cout<<"'index', 'search', 'exit' to exit the program\n";
 	std::cin >> command;
 	if (command == "index") {
 		 std::cout << "updating index... please wait...\n";
-		index.updateIndexDB();
+		 index.updateIndexDB();
 		 std::cout << "Task complete..\n";
 	 }
 	else if (command == "search"){
-		 std::vector<std::string> request;
 		 requests = json.getRequests();
 		 std::vector<std::vector<RelativeIndex>> result = server.search(requests);
 		 server.printResult();
@@ -62,5 +67,6 @@ int main () {
 		 std::cout << "Wrong command!\n";
 	 }
  }
+
 	std::cout << "Program complete..\n";
 }
