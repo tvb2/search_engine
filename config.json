@@ -2,7 +2,7 @@
   "config": {
     "max_responses": 5,
     "name": "LeoT",
-    "update interval minutes": 1,
+    "update interval minutes": 5,
     "version": "0.3"
   },
   "files": [

@@ -100,8 +100,7 @@ SearchServer::SearchServer(InvertedIndex &idx) : _index(idx){
 					std::cout << "\t" << "no results found!\n";
 				}
 				else {
-					std::cout  << "\t" << "doc: " << itRes->doc_id << ", filename: "
-					          << ", rank: " << itRes->rank << "\n";
+					std::cout  << "\t" << "doc id: " << itRes->doc_id << ", rank: " << itRes->rank << "\n";
 					++count;
 				}
 			}

@@ -28,7 +28,6 @@ public:
 	/**
 	 Perform one file indexation
 	 */
-	//void updateIndexDB(std::string const &doc, size_t fileNum);
 	void updateIndexFile(size_t fileNum);
 
 	/**
@@ -42,20 +41,6 @@ public:
 	 */
 	void periodicIndexing(bool const &needUpdate, bool &indexComplete);
 
-	/**
-	 * 	 Search dir for files to be indexed. File extensions are stored in extensions vector
-	 */
-	void setFilesToIndex();
-
-	/**
-	* return full list of files used for indexing the database
-	* @return map of std::filesystem::path with the files used in index
-	*/
-	/*
-	const std::map<std::filesystem::path,int>& getFilesFromIndex() const {
-		return files;
-	}
-*/
 	/**
 	* calculate number of occurrence of a word in the database
 	* @param word слово, частоту вхождений которого необходимо определить
@@ -83,7 +68,5 @@ public:
 	}
 
 };
-
-
 
 #endif //SEARCH_ENGINE_INVERTEDINDEX_H

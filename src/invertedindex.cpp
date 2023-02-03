@@ -115,44 +115,6 @@
 	}
 
 	/**
-	 Search dir for files to be indexed. File extensions are stored in extensions vector
-	 */
-	 /*
-	void InvertedIndex::setFilesToIndex() {
-
-		std::filesystem::path path = std::filesystem::current_path();
-		path /= "database";
-		std::filesystem::recursive_directory_iterator it;
-
-		for (auto extension:extensions) {
-			for (auto &p: std::filesystem::recursive_directory_iterator(path)) {
-				if (p.is_regular_file()) {
-					if (p.path().extension() == extension) {
-						//here could include logic to track new files to only index the newly found files.
-						//Not implemented here as not required by the task.
-						files.emplace(p.path(),1);
-					}
-				}
-			}
-		}
-	}
-*/
-	/**
-	* return filesystem::path to the file by its id
-	* @param doc_id
-	* @return std::filesystem::path&
-	*/
-	/*
-	const std::filesystem::path& InvertedIndex::getFilePath(size_t const &doc_id){
-		auto it = this->files.begin();
-		for (size_t i = 0; i < doc_id; ++i){
-			++it;
-		}
-		return it->first;
-	}
-	 */
-
-	/**
 	* Метод определяет количество вхождений слова word в загруженной базе
 	документов
 	* @param word слово, частоту вхождений которого необходимо определить
