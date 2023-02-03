@@ -11,25 +11,7 @@
 	/**
 	 * Constructor
 	 * */
-	InvertedIndex::InvertedIndex () {
-//		updateIndexDB();
-
-	#ifdef DEBUG_CONSTRUCTOR
-		for (auto it:files){
-			//std::cout<<it<<"\n";
-		}
-		std::cout<<docs.size() << " docs records in the index \n";
-		for (auto i = 0; i<docs.size(); ++i){
-			std::cout<<"docs["<<i<<"]: ";
-			for (size_t j = 0; j<10; ++j){
-				if (j<docs[i].length())
-					std::cout<<docs[i][j];
-			}
-			std::cout<<"\n";
-		}
-	#endif
-
-	}
+	InvertedIndex::InvertedIndex (ConverterJSON &js) : _json(js) {}
 
 	/**
 	* Обновить или заполнить базу документов, по которой будем совершать
@@ -86,10 +68,12 @@
 	 * */
 	void InvertedIndex::updateIndexDB() {
 		auto start = std::chrono::high_resolution_clock::now();
+		this->updateDocumentBase(_json.getTextDocuments());
+		this->index.clear();
 		size_t i = 0;
 		std::vector<std::thread> th(std::thread::hardware_concurrency());
 #ifndef DEBUG_DBINDEX
-		for (; i < this->files.size() - th.size() + 1 && i < this->docs.size(); i += th.size()) {
+		for (; i < this->docs.size() - th.size() + 1 && i < this->docs.size(); i += th.size()) {
 #endif
 #ifdef DEBUG_DBINDEX
 		for (; i < 10 && i < this->docs.size(); i += th.size()) {
@@ -109,8 +93,9 @@
 		std::chrono::duration<float> duration = stop - start;
 		std::cout << "indexing duration: " << duration.count() << " seconds \n";
 		std::cout << "Total: " << this->index.size() << " unique words indexed \n";
+		_json.setUpdateTimeStamp();
 #ifdef DEBUG_DBINDEX
-//		this->printIndex();
+		this->printIndex();
 #endif
 }
 
@@ -123,6 +108,7 @@
 			std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 			if (needUpdate) {
 				std::cout << "initiate db update\n";
+				this->updateDocumentBase(_json.getTextDocuments());
 				this->updateIndexDB();
 				indexComplete = true;
 			}
@@ -132,6 +118,7 @@
 	/**
 	 Search dir for files to be indexed. File extensions are stored in extensions vector
 	 */
+	 /*
 	void InvertedIndex::setFilesToIndex() {
 
 		std::filesystem::path path = std::filesystem::current_path();
@@ -150,12 +137,13 @@
 			}
 		}
 	}
-
+*/
 	/**
 	* return filesystem::path to the file by its id
 	* @param doc_id
 	* @return std::filesystem::path&
 	*/
+	/*
 	const std::filesystem::path& InvertedIndex::getFilePath(size_t const &doc_id){
 		auto it = this->files.begin();
 		for (size_t i = 0; i < doc_id; ++i){
@@ -163,6 +151,7 @@
 		}
 		return it->first;
 	}
+	 */
 
 	/**
 	* Метод определяет количество вхождений слова word в загруженной базе

@@ -1,7 +1,7 @@
 {
   "config": {
     "max_responses": 5,
-    "name": "WaP LT",
+    "name": "LeoT",
     "update interval minutes": 1,
     "version": "0.3"
   },

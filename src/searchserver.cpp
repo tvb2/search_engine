@@ -88,6 +88,7 @@ SearchServer::SearchServer(InvertedIndex &idx) : _index(idx){
 	/**
 	 * print search result to terminal. Maximum results to display is 5 (hardcoded)
 	 */
+
 	void SearchServer::printResult(){
 		size_t requests = 1;
 		for (auto it = result.begin(); it != result.end(); ++it){
@@ -100,7 +101,6 @@ SearchServer::SearchServer(InvertedIndex &idx) : _index(idx){
 				}
 				else {
 					std::cout  << "\t" << "doc: " << itRes->doc_id << ", filename: "
-					          << _index.getFilePath(itRes->doc_id).filename()
 					          << ", rank: " << itRes->rank << "\n";
 					++count;
 				}
