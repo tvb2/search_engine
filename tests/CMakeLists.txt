@@ -2,6 +2,13 @@
 
 project(Google_tests)
 
+# copy configuration and requests files into build directory
+configure_file(../config.json config.json COPYONLY)
+configure_file(../requests.json requests.json COPYONLY)
+configure_file(../libstdc++-6.dll libstdc++-6.dll COPYONLY)
+# creating database directory for files to be indexed
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/tests/database)
+
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 
 include(FetchContent)

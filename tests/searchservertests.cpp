@@ -2,6 +2,7 @@
 #include <string>
 #include "invertedindex.h"
 #include "searchserver.h"
+#include "converterjson.h"
 #include "gtest/gtest.h"
 #include "entry.h"
 #include <sstream>
@@ -13,7 +14,8 @@ void TestSearchServerFunctionality(
 		const std::vector<std::string>& request,
 		const std::vector<std::vector<RelativeIndex>>& expected
 ) {
-	InvertedIndex idx;
+	ConverterJSON json;
+	InvertedIndex idx(json);
 	SearchServer srv(idx);
 	std::vector<std::vector<RelativeIndex>> result_raw = srv.search(request);
 	std::vector<std::vector<RelativeIndex>> result;

@@ -1,6 +1,7 @@
 #include <vector>
 #include <string>
 #include "invertedindex.h"
+#include "converterjson.h"
 #include "gtest/gtest.h"
 #include "entry.h"
 #include <sstream>
@@ -12,7 +13,8 @@ void TestInvertedIndexFunctionality(
 		const std::vector<std::vector<Entry>>& expected
 ) {
 	std::vector<std::vector<Entry>> result;
-	InvertedIndex idx;
+	ConverterJSON json;
+	InvertedIndex idx(json);
 	for(auto& request : requests) {
 		std::vector<Entry> word_count = idx.getWordCount(request);
 		result.push_back(word_count);

@@ -70,10 +70,9 @@
 		auto start = std::chrono::high_resolution_clock::now();
 		this->updateDocumentBase(_json.getTextDocuments());
 		this->index.clear();
-		size_t i = 0;
 		std::vector<std::thread> th(std::thread::hardware_concurrency());
 #ifndef DEBUG_DBINDEX
-		for (; i < this->docs.size() - th.size() + 1 && i < this->docs.size(); i += th.size()) {
+		for (size_t i = 0; (i < (this->docs.size() - th.size() + 1)) && (i < this->docs.size()); i += th.size()) {
 #endif
 #ifdef DEBUG_DBINDEX
 		for (; i < 10 && i < this->docs.size(); i += th.size()) {
