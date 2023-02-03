@@ -11,46 +11,17 @@
 	/**
 	 * Constructor
 	 * */
-	InvertedIndex::InvertedIndex () {
-		updateIndexDB();
-
-	#ifdef DEBUG_CONSTRUCTOR
-		for (auto it:files){
-			//std::cout<<it<<"\n";
-		}
-		std::cout<<docs.size() << " docs records in the index \n";
-		for (auto i = 0; i<docs.size(); ++i){
-			std::cout<<"docs["<<i<<"]: ";
-			for (size_t j = 0; j<10; ++j){
-				if (j<docs[i].length())
-					std::cout<<docs[i][j];
-			}
-			std::cout<<"\n";
-		}
-	#endif
-
-	}
+	InvertedIndex::InvertedIndex (ConverterJSON &js) : _json(js) {}
 
 	/**
 	* Обновить или заполнить базу документов, по которой будем совершать
 	поиск
 	* @param texts_input содержимое документов
 	*/
-	void InvertedIndex::updateDocumentBase(){
+	void InvertedIndex::updateDocumentBase(std::vector<std::string> input_docs){
 	//clear database before indexation
 	docs.clear();
-	docs.resize(files.size());
-	auto it = files.begin();
-	for (size_t i = 0; i < files.size(); ++i){
-		std::string buffer;
-		std::ifstream current((it++)->first);
-		if (current.is_open()) {
-			while (!current.eof()) {
-				std::getline(current, buffer);
-				docs[i].append(buffer);
-			}
-		}
-	}
+	docs = input_docs;
 }
 
 	std::mutex indexAccess;
@@ -97,19 +68,18 @@
 	 * */
 	void InvertedIndex::updateIndexDB() {
 		auto start = std::chrono::high_resolution_clock::now();
-		this->setFilesToIndex();
-		this->updateDocumentBase();
-		size_t i = 0;
+		this->updateDocumentBase(_json.getTextDocuments());
+		this->index.clear();
 		std::vector<std::thread> th(std::thread::hardware_concurrency());
 #ifndef DEBUG_DBINDEX
-		for (; i < this->files.size() - th.size() + 1 && i < this->files.size(); i += th.size()) {
+		for (size_t i = 0; i < this->docs.size(); i += th.size()) {
 #endif
 #ifdef DEBUG_DBINDEX
-		for (; i < 10 && i < this->files.size(); i += th.size()) {
+		for (; i < 10 && i < this->docs.size(); i += th.size()) {
 #endif
 			size_t ind = i, threads = 0;
-			for (size_t t = 0; t < th.size() && ((t+i) < this->files.size()); ++t) {
-				ind = i + t;
+			for (size_t t = 0; t < th.size() && ((t+i) < this->docs.size()); ++t) {
+				ind = t+i;
 				th[t] = std::thread{&InvertedIndex::updateIndexFile, this, std::ref(ind)};
 				std::this_thread::sleep_for(std::chrono::milliseconds(50));
 				++threads;
@@ -122,8 +92,9 @@
 		std::chrono::duration<float> duration = stop - start;
 		std::cout << "indexing duration: " << duration.count() << " seconds \n";
 		std::cout << "Total: " << this->index.size() << " unique words indexed \n";
+		_json.setUpdateTimeStamp();
 #ifdef DEBUG_DBINDEX
-//		this->printIndex();
+		this->printIndex();
 #endif
 }
 
@@ -136,45 +107,11 @@
 			std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 			if (needUpdate) {
 				std::cout << "initiate db update\n";
+				this->updateDocumentBase(_json.getTextDocuments());
 				this->updateIndexDB();
 				indexComplete = true;
 			}
 		}
-	}
-
-	/**
-	 Search dir for files to be indexed. File extensions are stored in extensions vector
-	 */
-	void InvertedIndex::setFilesToIndex() {
-
-		std::filesystem::path path = std::filesystem::current_path();
-		path /= "database";
-		std::filesystem::recursive_directory_iterator it;
-
-		for (auto extension:extensions) {
-			for (auto &p: std::filesystem::recursive_directory_iterator(path)) {
-				if (p.is_regular_file()) {
-					if (p.path().extension() == extension) {
-						//here could include logic to track new files to only index the newly found files.
-						//Not implemented here as not required by the task.
-						files.emplace(p.path(),1);
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	* return filesystem::path to the file by its id
-	* @param doc_id
-	* @return std::filesystem::path&
-	*/
-	const std::filesystem::path& InvertedIndex::getFilePath(size_t const &doc_id){
-		auto it = this->files.begin();
-		for (size_t i = 0; i < doc_id; ++i){
-			++it;
-		}
-		return it->first;
 	}
 
 	/**

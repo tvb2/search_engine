@@ -1,5 +1,6 @@
 #ifndef SEARCH_ENGINE_RELATIVEINDEX_H
 #define SEARCH_ENGINE_RELATIVEINDEX_H
+#include <cstddef>
 
 struct RelativeIndex{
 	size_t doc_id;

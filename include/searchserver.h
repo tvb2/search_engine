@@ -1,9 +1,9 @@
 #ifndef SEARCH_ENGINE_SEARCHSERVER_H
 #define SEARCH_ENGINE_SEARCHSERVER_H
 #include "invertedindex.h"
+#include "relativeindex.h"
 #include <vector>
 #include <string>
-#include "relativeindex.h"
 
 class SearchServer {
 public:

@@ -18,21 +18,24 @@
   <li>search performed over text documents in the same location as executable file</li>
   <li>  Using JSON interface (<a href="https://github.com/nlohmann/json">nlohmann_json library</a>) for:</li>
   <ul>
-    <li>  <b>program configuration</b> is stored in a local config.json formatted cofig file</li>
-    <li>  <b> search requests</b> taken from another requests.json file </li>
-    <li>  <b>search results</b> are placed answers.json file</li>
+    <li>  <b>program configuration</b> is stored in a local config.json formatted file</li>
+    <li>  <b> search requests</b> are taken from requests.json file </li>
+    <li>  <b>search results</b> are placed into answers.json file</li>
   </ul>
-  <li>Separate class for <b>periodic indexing</b> of a database is performed based on configuration settings</li>
+  <li><b>Periodic indexing</b> of a database is performed based on configuration settings</li>
   <li><b>Unit testing</b> performed using Google tests module</li>
 </ul>
 
 ## General overview
-<p>Upon startup InvertedIndex class instance starts looking for a 'database' directory and searches all .txt files in it. Creates a list of files, reads them in and performs indexing.</p>
-<p>After that JSON module initializes and attempts to open up config file and reads configuration settings as well as updates list of files for the database. Search requests are read from a requests.json file </p>
+<p>Upon startup ConverterJSON class instance starts up looking for a config.json file. Program version is verified, maximum number of answers is read. Exceptions are thrown if config file is missing or corrupt or if program version is not correct. A list of files is read from config.json and those files are opened, their content is read into docs vector.</p>
+<p>InvertedIndex class initializes and creates index based on the content of docs vector of ConverterJSON class.</p>
+<p>Search requests are read from a requests.json file </p>
 <p>Then Search Server is started and performs search over the index, handing over results to JSON module and recorded to answers.json file. Additionally, results are displayed in the terminal</p>
+
 <p>Search index contains information about how many times does each word occur in each document.</p>
 
 ![Table](docs/table_relevance.png)
+
 <p>Search result will calculate relative relevance by calculating absolute relevance first (sum of occurrences of each word in the files. Then relative relevance is calculated by dividing absolute relevance by maximum abs relevance. </p>
 
 ![Absolute relevance](docs/abs_rel.png)
@@ -56,51 +59,53 @@
 
 ## Features
 <p>Nlohmann library used to conveniently handle JSON format.</p>
-<p>File list is stored in a map for quick access by path. This however leads to doc_id not corresponding directly to file names. It is easy to find which file corresponds to doc_id (and it is implemented when displaying search results in the terminal. </p>
 <p>Indexing of database is performed in multiple threads. Number of threads is determined dynamically during runtime by hardware concurrency.</p>
-<p>Monitoring and automatic database indexing is performed in the background using threads (detached). Time between indexing is defined in config.json in minutes. Initially, all re-indexing is performed over all files. However, in future can implement re-indexing of only new/modified files which should considerably reduce time for indexing. Initially, a database of about 1100 files of less than 1000 words each was used and indexing in maximum 4 threads takes about 95 seconds.</p>
+<p>Monitoring and automatic database indexing is performed in the background using threads (detached). Time between indexing is defined in config.json in minutes.</p>
 <p>Number of search results to be written to answers.json is defined by config.json setting.</p>
 
 ## Installation
-<p>Compile the program in Debug or Release modes. CMake is configured to copy files: config.json, requests.json, libstdc++-6.dll and 'database' folder to the build directory to allow program operation 'out of the box'. 'database' folder contains several text files for testing purposes.</p>
+<p>Compile the program in Debug or Release modes.</p>
+<p>CMake is configured to copy files: config.json, requests.json, libstdc++-6.dll and 'database' folder to the build directory to allow program operation 'out of the box'.</p>
+<p>'database' folder contains several text files for testing purposes.</p>
 
 ## Startup
-<p>As the program starts it will recursively search ./database folder for text files and create index. It will output status in the command line:</p>
+<p>As the program starts it will open up files from config.json list, read text data and create index. It will output status in the command line:</p>
     
     Program LeoT  started..
     creating index... please wait...
-<p>When indexing is completed, information about number of unique words and time to create index will be displayed: </p>
-    
-    indexing duration: 0.255294 seconds
-    Total: 719 unique words indexed
-    
-<p>Search server initializez and information is displayed in the terminal:</p>
-
-    search sever initialized!
-    index created.
 
 <p>JSON module intializes. It will check config.json file and load search requests from requests.json. Information is displayed if JSON has started successfully:</p>
 
     JSON module initialized
 
-<p>When all module have started up successfully a search is initiated using search strings from requests.json file. Results are displayed in the terminal and also written to answers.json. Results formats in terminal and answers.json file differ. Answers.json will only contain doc_id rank of results while terminal will also contain file name:</p>
+<p>When indexing is completed, information about number of unique words and time to create index will be displayed: </p>
+    
+    indexing duration: 0.255294 seconds
+    Total: 719 unique words indexed
+    
+<p>Search server initializes and information is displayed in the terminal:</p>
+
+    search sever initialized!
+    index created.
+
+
+<p>When all module have started up successfully a search is initiated using search strings from requests.json file. Results are displayed in the terminal and also written to answers.json.</p>
 <p>Terminal output:</p>
 
     Request1 results:
-    doc: 1, filename: "file002.txt", rank: 1
-    doc: 0, filename: "file001.txt", rank: 0.735294
-    doc: 3, filename: "file004.txt", rank: 0.529412
-    doc: 2, filename: "file003.txt", rank: 0.147059
+    doc id: 1, rank: 1
+    doc id: 0, rank: 0.764706
+    doc id: 3, rank: 0.529412
+    doc id: 2, rank: 0.147059
     Request2 results:
-    doc: 1, filename: "file002.txt", rank: 1
-    doc: 3, filename: "file004.txt", rank: 0.333333
+    doc id: 1, rank: 1
+    doc id: 3, rank: 0.333333
     Request3 results:
     no results found!
     Request4 results:
     no results found!
     Request5 results:
     no results found!
-    'index', 'search', 'exit' to exit the program
 
 <p>The same result in answers.json:</p>
 
@@ -158,7 +163,7 @@
 
     'index', 'search', 'exit' to exit the program
 
-<p>Enter corresponding command and check output. Indexing will initiate database indexing. If you add or remove files from ./database folder, corresponding changes should be noticed in the config.json files field.</p>
+<p>Enter corresponding command and check output. Indexing will initiate database indexing. If you remove files from ./database folder, error will display in terminal advising corresponding file was not found. Add/remove files in the config.json files and re-run indexing to see changes in number of words and/or search results.</p>
 
 <p>Change settings in config.json file to display different number of results (by default the value is set to 5 and check that more/less results are displayed</p>
 
@@ -169,7 +174,7 @@
         "version": "0.1"
     },
 
-<p>Change "update interval minutes" value in config.json (default is 1) to verify automatic re-indexing of the database works properly</p>
+<p>Change "update interval minutes" value in config.json to verify automatic re-indexing of the database works properly</p>
 
 <p>Edit requests.json file, save it and type 'search' command in the terminal to change search target. Search results will be displayed in the terminal. You may add/remove fields in "requests" key and modify lines to search for.</p>
 

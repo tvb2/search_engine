@@ -6,6 +6,7 @@
 #include <map>
 #include <filesystem>
 #include <fstream>
+#include "converterjson.h"
 #include "entry.h"
 
 class InvertedIndex{
@@ -13,21 +14,20 @@ private:
 	std::vector<std::string> docs;
 	std::map<std::string, std::vector<Entry>> index;
 	std::vector<std::string> extensions {".txt"};
-	std::map<std::filesystem::path,int> files;
+	ConverterJSON _json;
 
 public:
-		InvertedIndex();
+		InvertedIndex(ConverterJSON &js);
 
 	/**
 	Обновить или заполнить базу документов, по которой будем совершать
 	поиск @param texts_input содержимое документов
 	*/
-	void updateDocumentBase();
+	void updateDocumentBase(std::vector<std::string> input_docs);
 
 	/**
 	 Perform one file indexation
 	 */
-	//void updateIndexDB(std::string const &doc, size_t fileNum);
 	void updateIndexFile(size_t fileNum);
 
 	/**
@@ -40,19 +40,6 @@ public:
 	 * @param needUpdate
 	 */
 	void periodicIndexing(bool const &needUpdate, bool &indexComplete);
-
-	/**
-	 * 	 Search dir for files to be indexed. File extensions are stored in extensions vector
-	 */
-	void setFilesToIndex();
-
-	/**
-	* return full list of files used for indexing the database
-	* @return map of std::filesystem::path with the files used in index
-	*/
-	const std::map<std::filesystem::path,int>& getFilesFromIndex() const {
-		return files;
-	}
 
 	/**
 	* calculate number of occurrence of a word in the database
@@ -81,7 +68,5 @@ public:
 	}
 
 };
-
-
 
 #endif //SEARCH_ENGINE_INVERTEDINDEX_H
