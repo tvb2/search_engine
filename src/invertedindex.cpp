@@ -72,14 +72,14 @@
 		this->index.clear();
 		std::vector<std::thread> th(std::thread::hardware_concurrency());
 #ifndef DEBUG_DBINDEX
-		for (size_t i = 0; (i < (this->docs.size() - th.size() + 1)) && (i < this->docs.size()); i += th.size()) {
+		for (size_t i = 0; i < this->docs.size(); i += th.size()) {
 #endif
 #ifdef DEBUG_DBINDEX
 		for (; i < 10 && i < this->docs.size(); i += th.size()) {
 #endif
 			size_t ind = i, threads = 0;
-			for (size_t t = 0; t < th.size() && t < this->docs.size(); ++t) {
-				ind = i + t;
+			for (size_t t = 0; t < th.size() && ((t+i) < this->docs.size()); ++t) {
+				ind = t+i;
 				th[t] = std::thread{&InvertedIndex::updateIndexFile, this, std::ref(ind)};
 				std::this_thread::sleep_for(std::chrono::milliseconds(50));
 				++threads;
