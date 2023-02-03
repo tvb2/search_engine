@@ -16,6 +16,7 @@ void TestSearchServerFunctionality(
 ) {
 	ConverterJSON json;
 	InvertedIndex idx(json);
+	idx.updateIndexDB();
 	SearchServer srv(idx);
 	std::vector<std::vector<RelativeIndex>> result_raw = srv.search(request);
 	std::vector<std::vector<RelativeIndex>> result;
@@ -37,7 +38,46 @@ for (size_t i = 0; i < result.size(); ++i){
 ASSERT_EQ(result, expected);
 }
 
-void prepareSearchTestFiles(const std::vector<std::string> &docs){
+/**
+* Search dir for files to be indexed. File extensions are stored in extensions vector
+*/
+std::map<std::filesystem::path, int> setFilesToIndexSS() {
+	std::filesystem::path path = std::filesystem::current_path();
+	path /= "database";
+	std::filesystem::recursive_directory_iterator it;
+	std::map<std::filesystem::path, int> files;
+	for (auto &p: std::filesystem::recursive_directory_iterator(path)) {
+		if (p.is_regular_file()) {
+			files.emplace(p.path(),1);
+		}
+	}
+	return files;
+}
+
+void updateFileListSS(){
+	nlohmann::json config;
+	std::ifstream input("config.json");
+	input >> config;
+	input.close();
+
+	std::map<std::filesystem::path,int> files = setFilesToIndexSS();
+	nlohmann::json f = nlohmann::json::array();
+	for (auto item:files) {
+		f.emplace_back(item.first);
+	}
+
+	config["files"] = f;
+	std::ofstream output ("config.json");
+	output << std::setw(4) << config << "\n";
+	output.close();
+}
+
+/**
+ * Clear database direcotory, create directory with test files and fill them with test data.
+ * update config.json to look at the files in the database directory
+ * @param docs
+ */
+void prepareTestFilesSS(const std::vector<std::string> &docs){
 	std::filesystem::create_directory("database");
 	std::filesystem::path path = std::filesystem::current_path();
 	path /= "database";
@@ -56,6 +96,8 @@ void prepareSearchTestFiles(const std::vector<std::string> &docs){
 		testFile.close();
 		path = std::filesystem::current_path();
 	}
+
+	updateFileListSS();
 }
 
 TEST(TestCaseSearchServer, TestSimple) {
@@ -86,7 +128,7 @@ const std::vector<std::string> docs = {
 			};
 	const std::vector<std::string> request = {"milk water", "sugar"};
 
-	prepareSearchTestFiles(docs);
+	prepareTestFilesSS(docs);
 	TestSearchServerFunctionality(docs, request, expected);
 
 }
@@ -124,12 +166,12 @@ TEST(TestCaseSearchServer, TestTop5) {
 			{
 					{19, 1},
 					{6, 1},
-					{18, 0.666666687},
-					{17, 0.666666687},
-					{16, 0.666666687}
+					{21, 0.666666687},
+					{20, 0.666666687},
+					{18, 0.666666687}
 			}
 	};
-	prepareSearchTestFiles(docs);
+	prepareTestFilesSS(docs);
 
 	TestSearchServerFunctionality(docs, request, expected);
 }
