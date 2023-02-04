@@ -26,7 +26,7 @@ int main () {
 	std::vector<std::string> requests = json.getRequests();
 	std::vector<std::vector<RelativeIndex>> relInd = server.search(requests);
 	json.putAnswers(relInd);
-	server.printResult();
+	server.printResult(json.getResponsesLimit());
 
 	std::string command = "exit";
 
@@ -58,7 +58,7 @@ int main () {
 	else if (command == "search"){
 		 requests = json.getRequests();
 		 std::vector<std::vector<RelativeIndex>> result = server.search(requests);
-		 server.printResult();
+		 server.printResult(json.getResponsesLimit());
 	 }
 	else if (command == "exit") {
 		 break;

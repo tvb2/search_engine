@@ -37,7 +37,7 @@ public:
 	std::vector<std::vector<RelativeIndex>> search(const std::vector<std::string>& queries_input);
 
 
-	void printResult();
+	void printResult(int const &maxResults);
 
 	/**
 	 * get search result as a vector of sorted Relative index

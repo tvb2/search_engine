@@ -89,13 +89,13 @@ SearchServer::SearchServer(InvertedIndex &idx) : _index(idx){
 	 * print search result to terminal. Maximum results to display is 5 (hardcoded)
 	 */
 
-	void SearchServer::printResult(){
+	void SearchServer::printResult(int const &maxResults){
 		size_t requests = 1;
 		for (auto it = result.begin(); it != result.end(); ++it){
 			std::cout<<"Request" << requests <<" results:\n";
 			++requests;
-			size_t count = 1;
-			for (auto itRes = it->crbegin(); itRes != it->crend() && count <= 5; ++itRes) {
+			size_t count = 0;
+			for (auto itRes = it->crbegin(); itRes != it->crend() && count < maxResults; ++itRes) {
 				if (itRes->rank == -1){
 					std::cout << "\t" << "no results found!\n";
 				}
