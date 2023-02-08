@@ -62,11 +62,13 @@
 <p>Indexing of database is performed in multiple threads. Number of threads is determined dynamically during runtime by hardware concurrency.</p>
 <p>Monitoring and automatic database indexing is performed in the background using threads (detached). Time between indexing is defined in config.json in minutes.</p>
 <p>Number of search results to be written to answers.json is defined by config.json setting.</p>
+<p>Main program runs on Windows 10 and Ubuntu Jammy (22.04.1). Google Tests only run under Windows </p>
 
 ## Installation
 <p>Compile the program in Debug or Release modes.</p>
 <p>CMake is configured to copy files: config.json, requests.json, libstdc++-6.dll and 'database' folder to the build directory to allow program operation 'out of the box'.</p>
 <p>'database' folder contains several text files for testing purposes.</p>
+<p>Google tests will only run under Windows. The main app will run under Windows 10 and Ubuntu (Jammy) </p>
 
 ## Startup
 <p>As the program starts it will open up files from config.json list, read text data and create index. It will output status in the command line:</p>
