@@ -1,4 +1,9 @@
-cmake_minimum_required(VERSION 3.23)
+if (WIN32)
+    cmake_minimum_required(VERSION 3.23)
+else ()
+    cmake_minimum_required(VERSION 3.22) #unix
+endif (WIN32)
+
 project(search_engine VERSION 0.2)
 
 set(CMAKE_CXX_STANDARD 17)

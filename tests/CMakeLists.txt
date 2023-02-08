@@ -3,7 +3,11 @@
 project(Google_tests)
 
 # copy configuration and requests files into build directory
-configure_file(../config.json config.json COPYONLY)
+if (WIN32)
+    configure_file(../config_win.json config.json COPYONLY)
+else()
+    configure_file(../config_lin.json config.json COPYONLY) #unix
+endif(WIN32)
 configure_file(../requests.json requests.json COPYONLY)
 configure_file(../libstdc++-6.dll libstdc++-6.dll COPYONLY)
 # creating database directory for files to be indexed
